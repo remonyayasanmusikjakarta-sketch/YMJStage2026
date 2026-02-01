@@ -902,12 +902,16 @@
             color: var(--primary);
         }
 
-        /* Gallery Section */
+        /* Gallery Section - UPDATED */
+        .gallery-container {
+            margin-top: 2rem;
+        }
+
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 1rem;
-            margin-top: 2rem;
+            margin-bottom: 2rem;
         }
 
         .gallery-item {
@@ -948,6 +952,121 @@
 
         .gallery-item:hover .gallery-overlay {
             transform: translateY(0);
+        }
+
+        .gallery-info {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--text-light);
+        }
+
+        .gallery-count {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .gallery-view-all {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+            border: 2px solid var(--primary);
+            border-radius: 50px;
+        }
+
+        .gallery-view-all:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .gallery-view-all i {
+            margin-left: 0.5rem;
+        }
+
+        /* Full Gallery Modal */
+        .full-gallery-modal {
+            display: none;
+            position: fixed;
+            z-index: 20000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            animation: fadeIn 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .full-gallery-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .full-gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .full-gallery-header h2 {
+            color: white;
+            margin: 0;
+        }
+
+        .close-full-gallery {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-full-gallery:hover {
+            transform: rotate(90deg);
+        }
+
+        .full-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .full-gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .full-gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        .full-gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .full-gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 0.5rem;
+            font-size: 0.8rem;
         }
 
         /* Community Section */
@@ -1327,6 +1446,10 @@
                 width: 100%;
                 right: -100%;
             }
+
+            .full-gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
         }
 
         /* Hidden content for different languages */
@@ -1614,6 +1737,10 @@
                     <p class="upload-text">Upload Gallery Images</p>
                     <p class="upload-hint">Multiple files allowed</p>
                     <input type="file" id="galleryInput" class="file-input" accept="image/*" multiple>
+                </div>
+                <div class="gallery-info" style="margin-top: 1rem; padding: 1rem; background: var(--bg-light); border-radius: 8px;">
+                    <p style="color: var(--text-dark);"><strong>Total Images:</strong> <span id="totalGalleryCount">0</span></p>
+                    <p style="color: var(--text-light); font-size: 0.9rem; margin-top: 0.5rem;">First 10 images will be shown in the main gallery. Click "View All Gallery" to see all images.</p>
                 </div>
                 <div id="galleryManager" class="image-manager">
                     <!-- Gallery images will be displayed here -->
@@ -1965,12 +2092,24 @@
             </div>
         </section>
 
-        <!-- Gallery Section -->
+        <!-- Gallery Section - UPDATED -->
         <section id="gallery" class="featured-project">
             <div class="container">
                 <h2 class="section-title" data-lang="gallery-title">Gallery</h2>
-                <div class="gallery-grid" id="galleryGrid">
-                    <!-- Gallery items will be dynamically added here -->
+                
+                <div class="gallery-container">
+                    <div class="gallery-grid" id="galleryGrid">
+                        <!-- Gallery items will be dynamically added here (max 10) -->
+                    </div>
+                    
+                    <div class="gallery-info" id="galleryInfo">
+                        <div class="gallery-count">
+                            Showing <span id="visibleCount">0</span> of <span id="totalCount">0</span> photos
+                        </div>
+                        <a href="#" class="gallery-view-all" onclick="openFullGallery()">
+                            View All Gallery <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -2753,6 +2892,21 @@
         <img class="image-modal-content" id="modalImage">
     </div>
 
+    <!-- Full Gallery Modal -->
+    <div id="fullGalleryModal" class="full-gallery-modal">
+        <div class="full-gallery-content">
+            <div class="full-gallery-header">
+                <h2>Complete Gallery</h2>
+                <button class="close-full-gallery" onclick="closeFullGallery()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="full-gallery-grid" id="fullGalleryGrid">
+                <!-- All gallery images will be displayed here -->
+            </div>
+        </div>
+    </div>
+
     <script>
         // Admin System
         const ADMIN_PASSWORD = 'ymjadmin2025'; // Change this to your desired password
@@ -3033,26 +3187,46 @@
             }
         }
 
-        // Update gallery display
+        // Update gallery display - UPDATED
         function updateGalleryDisplay(galleryData) {
             const galleryGrid = document.getElementById('galleryGrid');
+            const visibleCount = document.getElementById('visibleCount');
+            const totalCount = document.getElementById('totalCount');
+            
+            // Clear existing gallery items
             galleryGrid.innerHTML = '';
             
             if (galleryData && galleryData.length > 0) {
-                galleryData.forEach((imageData, index) => {
+                // Show only first 10 images in main gallery
+                const displayCount = Math.min(10, galleryData.length);
+                
+                for (let i = 0; i < displayCount; i++) {
+                    const imageData = galleryData[i];
                     const galleryItem = document.createElement('div');
                     galleryItem.className = 'gallery-item';
                     galleryItem.innerHTML = `
                         <img src="${imageData.src}" alt="${imageData.name}" onclick="openImageModal('${imageData.src}')">
                         <div class="gallery-overlay">
                             <h4>${imageData.name}</h4>
-                            <p>Gallery image ${index + 1}</p>
+                            <p>Gallery image ${i + 1}</p>
                         </div>
                     `;
                     galleryGrid.appendChild(galleryItem);
-                });
+                }
+                
+                // Update counts
+                visibleCount.textContent = displayCount;
+                totalCount.textContent = galleryData.length;
+                
+                // Show/hide gallery info based on total count
+                const galleryInfo = document.getElementById('galleryInfo');
+                if (galleryData.length > 10) {
+                    galleryInfo.style.display = 'block';
+                } else {
+                    galleryInfo.style.display = 'none';
+                }
             } else {
-                // Show placeholder if no gallery images
+                // Show placeholders if no gallery images
                 for (let i = 1; i <= 4; i++) {
                     const galleryItem = document.createElement('div');
                     galleryItem.className = 'gallery-item';
@@ -3063,6 +3237,100 @@
                     `;
                     galleryGrid.appendChild(galleryItem);
                 }
+                
+                // Hide gallery info
+                document.getElementById('galleryInfo').style.display = 'none';
+            }
+        }
+
+        // Open full gallery modal
+        function openFullGallery() {
+            const modal = document.getElementById('fullGalleryModal');
+            const fullGalleryGrid = document.getElementById('fullGalleryGrid');
+            const galleryData = loadImage(IMAGE_KEYS.gallery) || [];
+            
+            // Clear existing content
+            fullGalleryGrid.innerHTML = '';
+            
+            // Add all gallery images to full gallery
+            galleryData.forEach((imageData, index) => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'full-gallery-item';
+                galleryItem.innerHTML = `
+                    <img src="${imageData.src}" alt="${imageData.name}" onclick="openImageModal('${imageData.src}')">
+                    <div class="full-gallery-overlay">
+                        <p>${imageData.name}</p>
+                    </div>
+                `;
+                fullGalleryGrid.appendChild(galleryItem);
+            });
+            
+            modal.style.display = 'block';
+        }
+
+        // Close full gallery modal
+        function closeFullGallery() {
+            document.getElementById('fullGalleryModal').style.display = 'none';
+        }
+
+        // Load all images
+        function loadAllImages() {
+            // Load all image types
+            Object.values(IMAGE_KEYS).forEach(key => {
+                const imageData = loadImage(key);
+                if (imageData) {
+                    if (key === IMAGE_KEYS.gallery) {
+                        updateGalleryDisplay(imageData);
+                    } else {
+                        updateImageDisplay(key, imageData);
+                    }
+                }
+            });
+
+            // Update gallery manager
+            updateGalleryManager();
+        }
+
+        // Update gallery manager in admin panel
+        function updateGalleryManager() {
+            const galleryData = loadImage(IMAGE_KEYS.gallery) || [];
+            const galleryManager = document.getElementById('galleryManager');
+            const totalGalleryCount = document.getElementById('totalGalleryCount');
+            
+            galleryManager.innerHTML = '';
+            
+            if (galleryData.length > 0) {
+                galleryData.forEach((imageData, index) => {
+                    const imageItem = document.createElement('div');
+                    imageItem.className = 'current-image';
+                    imageItem.innerHTML = `
+                        <img src="${imageData.src}" alt="${imageData.name}">
+                        <div class="image-info">${imageData.name}</div>
+                        <div class="image-actions">
+                            <button onclick="deleteGalleryImage(${index})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    galleryManager.appendChild(imageItem);
+                });
+                
+                // Update total count
+                totalGalleryCount.textContent = galleryData.length;
+            } else {
+                galleryManager.innerHTML = '<p style="text-align: center; color: var(--text-light);">No gallery images uploaded</p>';
+                totalGalleryCount.textContent = '0';
+            }
+        }
+
+        // Delete gallery image
+        function deleteGalleryImage(index) {
+            if (confirm('Are you sure you want to delete this gallery image?')) {
+                let galleryData = loadImage(IMAGE_KEYS.gallery) || [];
+                galleryData.splice(index, 1);
+                saveImage(IMAGE_KEYS.gallery, galleryData);
+                updateGalleryManager();
+                updateGalleryDisplay(galleryData);
             }
         }
 
@@ -3103,65 +3371,12 @@
                         // Save after all files are processed
                         if (galleryData.length === files.length) {
                             saveImage(IMAGE_KEYS.gallery, galleryData);
+                            updateGalleryDisplay(galleryData);
                         }
                     };
                     reader.readAsDataURL(file);
                 }
             });
-        }
-
-        // Load all images
-        function loadAllImages() {
-            // Load all image types
-            Object.values(IMAGE_KEYS).forEach(key => {
-                const imageData = loadImage(key);
-                if (imageData) {
-                    if (key === IMAGE_KEYS.gallery) {
-                        updateGalleryDisplay(imageData);
-                    } else {
-                        updateImageDisplay(key, imageData);
-                    }
-                }
-            });
-
-            // Update gallery manager
-            updateGalleryManager();
-        }
-
-        // Update gallery manager in admin panel
-        function updateGalleryManager() {
-            const galleryData = loadImage(IMAGE_KEYS.gallery) || [];
-            const galleryManager = document.getElementById('galleryManager');
-            galleryManager.innerHTML = '';
-            
-            if (galleryData.length > 0) {
-                galleryData.forEach((imageData, index) => {
-                    const imageItem = document.createElement('div');
-                    imageItem.className = 'current-image';
-                    imageItem.innerHTML = `
-                        <img src="${imageData.src}" alt="${imageData.name}">
-                        <div class="image-info">${imageData.name}</div>
-                        <div class="image-actions">
-                            <button onclick="deleteGalleryImage(${index})" title="Delete">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                    galleryManager.appendChild(imageItem);
-                });
-            } else {
-                galleryManager.innerHTML = '<p style="text-align: center; color: var(--text-light);">No gallery images uploaded</p>';
-            }
-        }
-
-        // Delete gallery image
-        function deleteGalleryImage(index) {
-            if (confirm('Are you sure you want to delete this gallery image?')) {
-                let galleryData = loadImage(IMAGE_KEYS.gallery) || [];
-                galleryData.splice(index, 1);
-                saveImage(IMAGE_KEYS.gallery, galleryData);
-                updateGalleryManager();
-            }
         }
 
         // Setup file input listeners
