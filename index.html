@@ -371,6 +371,7 @@
             align-items: center;
             z-index: 9999;
             transition: opacity 0.8s ease, visibility 0.8s ease;
+            cursor: pointer; /* Added to make it clickable */
         }
 
         .splash-content {
@@ -546,7 +547,6 @@
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
             background-size: cover;
             background-position: center;
             opacity: 0.2;
@@ -1291,6 +1291,7 @@
             background-color: rgba(0,0,0,0.05);
         }
 
+        /* Guide Grid */
         .guide-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1528,15 +1529,88 @@
             height: 100%;
             background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
                         linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
-                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%, 
                         linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
             background-size: 20px 20px;
-            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            background-position: 0 0, 0 10px, 0 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #999;
             font-size: 0.9rem;
+        }
+
+        /* Gallery counter badge */
+        .gallery-counter {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        /* Upload success message */
+        .upload-success {
+            padding: 10px 20px;
+            background: var(--success);
+            color: white;
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-align: center;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Multiple file upload styling */
+        .file-list {
+            margin-top: 1rem;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 0.5rem;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 70%;
+        }
+
+        .file-remove {
+            background: var(--error);
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -1645,11 +1719,7 @@
                         <div class="image-info" id="beethovenInfo" style="display:none;"></div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Beethoven Detail Images -->
-            <div class="admin-section">
-                <h4>Beethoven Detail Images</h4>
                 <div class="upload-area" onclick="document.getElementById('beethovenDetailInput').click()">
                     <i class="fas fa-music upload-icon"></i>
                     <p class="upload-text">Upload Beethoven Detail Image</p>
@@ -1659,9 +1729,9 @@
                 <div class="image-manager">
                     <div class="current-image">
                         <img id="currentBeethovenDetail" src="" alt="Beethoven Detail" style="display:none;">
-                        <div class="placeholder-image" id="beethovenDetailPlaceholder">
-                            <span>No Beethoven detail image uploaded</span>
-                        </div>
+                            <div class="placeholder-image" id="beethovenDetailPlaceholder">
+                                <span>No Beethoven detail image uploaded</span>
+                            </div>
                         <div class="image-info" id="beethovenDetailInfo" style="display:none;"></div>
                     </div>
                 </div>
@@ -1729,19 +1799,21 @@
                 </div>
             </div>
 
-            <!-- Gallery Management -->
+            <!-- Gallery Management - UPDATED -->
             <div class="admin-section">
                 <h4>Gallery Management</h4>
                 <div class="upload-area" onclick="document.getElementById('galleryInput').click()">
                     <i class="fas fa-images upload-icon"></i>
                     <p class="upload-text">Upload Gallery Images</p>
-                    <p class="upload-hint">Multiple files allowed</p>
+                    <p class="upload-hint">Select multiple images (PNG, JPG up to 5MB each)</p>
                     <input type="file" id="galleryInput" class="file-input" accept="image/*" multiple>
                 </div>
+                
                 <div class="gallery-info" style="margin-top: 1rem; padding: 1rem; background: var(--bg-light); border-radius: 8px;">
                     <p style="color: var(--text-dark);"><strong>Total Images:</strong> <span id="totalGalleryCount">0</span></p>
-                    <p style="color: var(--text-light); font-size: 0.9rem; margin-top: 0.5rem;">First 10 images will be shown in the main gallery. Click "View All Gallery" to see all images.</p>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">Only first 10 images will be displayed on the main page</p>
                 </div>
+                
                 <div id="galleryManager" class="image-manager">
                     <!-- Gallery images will be displayed here -->
                 </div>
@@ -1781,7 +1853,7 @@
                     <li><a href="#events" data-lang="nav-events">Events</a></li>
                     <li><a href="#artists" data-lang="nav-artists">Artists</a></li>
                     <li><a href="#beethoven" data-lang="nav-beethoven">Beethoven 2027</a></li>
-                    <li><a href="#gallery" data-lang="nav-gallery">Gallery</a></li>
+                    <li><a href="#gallery" data-lang="gallery">Gallery</a></li>
                     <li><a href="#community" data-lang="nav-community">Community</a></li>
                     <li><a href="#contact" data-lang="nav-contact">Contact</a></li>
                 </ul>
@@ -1819,7 +1891,7 @@
                         <h1>YMJ STAGE</h1>
                         <p class="hero-subtitle">Mengkurasi Proyek Musik Klasik Berbasis Seniman di Panggung Internasional</p>
                         <p class="hero-description">
-                            Selamat datang di YMJ STAGE — sebuah platform yang digerakkan oleh seniman untuk mendukung musisi, mengembangkan proyek bermakna, dan menghubungkan visi artistik dengan panggung dunia. Kami tidak sekadar mengelola karier. Kami mendampingi perjalanan artistik, membangun kolaborasi jangka panjang.
+                            Selamat datang di YMJ STAGE — sebuah platform yang digerakkan oleh seniman untuk mendukung musisi, mengembangkan proyek bermakna, dan menghubungkan visi artistik dengan panggung dunia.
                         </p>
                         <div class="hero-buttons">
                             <a href="#events" class="btn btn-primary">Jelajahi Acara Kami</a>
@@ -1862,7 +1934,7 @@
                     <div class="mission-content">
                         <p>Sebagai bagian dari Yayasan Musik Jakarta, YMJ STAGE berdedikasi untuk menumbuhkan keunggulan artistik dan memajukan seniman Indonesia di panggung internasional, sambil menyambut kolaborasi global ke Indonesia.</p>
                         <p class="mission-highlight">Bersama, kita memajukan seni.<br>Bersama, kita mengangkat Indonesia.</p>
-                        <p>Kami percaya bahwa musik adalah panggilan, bukan komoditas. Karier artistik yang berkelanjutan tumbuh melalui kepercayaan, tujuan bersama, dan relasi yang bermakna.</p>
+                        <p>Kami percaya bahwa musik adalah panggilan, bukan komoditas. Karier artistik yang berkelanjutan tumbuh melalui kepercayaan kepercayaan dan relasi yang bermakna.</p>
                     </div>
                 </div>
 
@@ -1923,6 +1995,18 @@
                                 </div>
                                 <p class="event-description">
                                     A festival showcasing the finest classical musicians from across Southeast Asia, with masterclasses and collaborative performances.
+                                </p>
+                                <a href="#" class="event-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                            <div class="event-card fade-in">
+                                <div class="event-date">September 12-18, 2026</div>
+                                <h3 class="event-title">Indonesian Cultural Exchange Tour</h3>
+                                <div class="event-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Multiple Cities, Europe</span>
+                                </div>
+                                <p class="event-description">
+                                    A tour featuring Indonesian classical musicians performing in major European venues, promoting cultural exchange and artistic collaboration.
                                 </p>
                                 <a href="#" class="event-link">Learn More <i class="fas fa-arrow-right"></i></a>
                             </div>
@@ -2020,7 +2104,7 @@
                             </div>
                             <div class="event-card fade-in">
                                 <div class="event-date">August 3-8, 2024</div>
-                                <h3 class="event-title">Southeast Asian Music Educators Conference</h3>
+                                <h3 class="event-title">Music Educators Conference</h3>
                                 <div class="event-location">
                                     <i class="fas fa-map-marker-alt"></i>
                                     <span>Singapore</span>
@@ -2065,7 +2149,7 @@
                         <div class="content-en active">
                             <h3 class="project-title">Beethoven Bicentennial Memorial Concert Series (2027–2028)</h3>
                             <p class="project-description">
-                                A global performance cycle commemorating the 200th anniversary of the death of Ludwig van Beethoven, presenting the complete violin and piano repertoire through carefully curated concert programs. Rather than a single commemorative event, the project is designed as a flexible, modular cycle.
+                                A global performance cycle commemorating the 200th anniversary of the death of Ludwig van Beethoven, presenting the complete violin and piano repertoire through carefully curated concert programs.
                             </p>
                             <a href="#beethoven" class="btn btn-primary">View Project Details</a>
                         </div>
@@ -2074,7 +2158,7 @@
                         <div class="content-id">
                             <h3 class="project-title">Seri Konser Peringatan Dua Abad Wafatnya Beethoven (2027–2028)</h3>
                             <p class="project-description">
-                                Siklus pertunjukan global memperingati 200 tahun wafatnya Ludwig van Beethoven, menyajikan repertoar lengkap biola dan piano melalui program konser yang dikurasi dengan cermat. Bukan sebagai satu peristiwa peringatan tunggal, proyek ini dirancang sebagai siklus yang fleksibel dan modular.
+                                Siklus pertunjukan global memperingati 200 tahun wafatnya Ludwig van Beethoven, menyajikan repertoar lengkap biola dan piano melalui program konser yang dikurasi dengan cermat.
                             </p>
                             <a href="#beethoven" class="btn btn-primary">Lihat Detail Proyek</a>
                         </div>
@@ -2083,7 +2167,7 @@
                         <div class="content-zh">
                             <h3 class="project-title">贝多芬逝世二百周年纪念音乐会系列（2027–2028）</h3>
                             <p class="project-description">
-                                为纪念路德维希·范·贝多芬逝世二百周年而举办的全球演出周期，通过精心策划的音乐会节目呈现完整的小提琴与钢琴曲目。该项目并非作为一次性的纪念活动，而是设计为灵活、模块化的周期。
+                                为纪念路德维希·范·贝多芬逝世二百周年而举办的全球演出周期，通过精心策划的音乐会节目呈现完整的小提琴与钢琴曲目。
                             </p>
                             <a href="#beethoven" class="btn btn-primary">查看项目详情</a>
                         </div>
@@ -2092,21 +2176,21 @@
             </div>
         </section>
 
-        <!-- Gallery Section - UPDATED -->
+        <!-- Gallery Section -->
         <section id="gallery" class="featured-project">
             <div class="container">
                 <h2 class="section-title" data-lang="gallery-title">Gallery</h2>
                 
                 <div class="gallery-container">
                     <div class="gallery-grid" id="galleryGrid">
-                        <!-- Gallery items will be dynamically added here (max 10) -->
+                        <!-- Gallery items will be dynamically added here -->
                     </div>
                     
-                    <div class="gallery-info" id="galleryInfo">
+                    <div class="gallery-info">
                         <div class="gallery-count">
                             Showing <span id="visibleCount">0</span> of <span id="totalCount">0</span> photos
                         </div>
-                        <a href="#" class="gallery-view-all" onclick="openFullGallery()">
+                        <a href="#" class="gallery-view-all" onclick="openFullGallery(); return false;">
                             View All Gallery <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
@@ -2177,8 +2261,9 @@
                     <div class="artist-card fade-in">
                         <div class="artist-image">
                             <img id="kueiPinImg" src="" alt="Dr. Kuei Pin Yeo" style="display:none;">
-                            <div class="placeholder-image" id="kueiPinPlaceholder">
-                                <span>No Dr. Kuei Pin Yeo image uploaded</span>
+                                <div class="placeholder-image" id="kueiPinPlaceholder">
+                                    <span>No Dr. Kuei Pin Yeo image uploaded</span>
+                                </div>
                             </div>
                         </div>
                         <div class="artist-info">
@@ -2187,7 +2272,7 @@
                                 <h3 class="artist-name">Dr. Kuei Pin Yeo</h3>
                                 <p class="artist-role">Pianist</p>
                                 <p class="artist-bio">
-                                    A distinguished Indonesian pianist and Indonesia's first Doctor of Music in piano performance. Her international debut at Carnegie Recital Hall marked a significant milestone in her career.
+                                    Pianis Indonesia terkemuka dan doktor musik pertama Indonesia dalam bidang piano performance. Debut resitalnya di Carnegie Recital Hall, New York, menandai awal pengakuan internasionalnya.
                                 </p>
                                 <div class="artist-links">
                                     <a href="#" data-lang="bio">Biography</a>
@@ -2230,8 +2315,9 @@
                     <div class="artist-card fade-in">
                         <div class="artist-image">
                             <img id="japTjiImg" src="" alt="Jap Tji Kien" style="display:none;">
-                            <div class="placeholder-image" id="japTjiPlaceholder">
-                                <span>No Jap Tji Kien image uploaded</span>
+                                <div class="placeholder-image" id="japTjiPlaceholder">
+                                    <span>No Jap Tji Kien image uploaded</span>
+                                </div>
                             </div>
                         </div>
                         <div class="artist-info">
@@ -2252,7 +2338,7 @@
                             <!-- Indonesian Content -->
                             <div class="content-id">
                                 <h3 class="artist-name">Jap Tji Kien</h3>
-                                <p class="artist-role">Violinis & Dirigen</p>
+                                <p class="artist-role">Violinis & Conductor</p>
                                 <p class="artist-bio">
                                     Salah satu violinis dan dirigen paling dihormati di Indonesia, lahir di Bandung, dan dikenal sebagai penerima Fellowship of the Royal Schools of Music (FRSM), London, pertama di Asia Tenggara.
                                 </p>
@@ -2290,8 +2376,9 @@
                 <div class="project-card">
                     <div class="project-image">
                         <img id="beethovenDetailImg" src="" alt="Beethoven Project Detail" style="display:none;">
-                        <div class="placeholder-image" id="beethovenDetailPlaceholder" style="height:300px;">
-                            <span>No Beethoven detail image uploaded</span>
+                            <div class="placeholder-image" id="beethovenDetailPlaceholder" style="height:300px;">
+                                <span>No Beethoven detail image uploaded</span>
+                            </div>
                         </div>
                     </div>
                     <div class="project-content">
@@ -2299,7 +2386,7 @@
                         <div class="content-en active">
                             <h3 class="project-title">Beethoven Bicentennial World Project (2027–2028)</h3>
                             <p class="project-description">
-                                In commemoration of the 200th anniversary of the passing of Ludwig van Beethoven, YMJ STAGE has initiated a long-term artistic project centered on Beethoven's works for violin and piano. This initiative reflects YMJ's commitment to artist-led, historically grounded classical music projects developed with depth, care, and long-term vision.
+                                In commemoration of the 200th anniversary of the passing of Ludwig van Beethoven, YMJ STAGE has initiated a long-term artistic project centered on Beethoven's works for violin and piano.
                             </p>
                             <div style="margin-top: 1.5rem;">
                                 <h4 style="margin-bottom: 1rem; color: var(--primary);">Project Formats:</h4>
@@ -2317,7 +2404,7 @@
                         <div class="content-id">
                             <h3 class="project-title">Proyek Dunia Beethoven Bicentennial (2027–2028)</h3>
                             <p class="project-description">
-                                Dalam rangka memperingati 200 tahun wafatnya Ludwig van Beethoven, YMJ STAGE menginisiasi sebuah proyek artistik jangka panjang yang berfokus pada karya Beethoven untuk biola dan piano. Inisiatif ini mencerminkan komitmen YMJ terhadap proyek musik klasik yang digerakkan oleh seniman dan berlandaskan pemahaman historis.
+                                Dalam rangka memperingati 200 tahun wafatnya Ludwig van Beethoven, YMJ STAGE menginisiasi sebuah proyek artistik jangka panjang.
                             </p>
                             <div style="margin-top: 1.5rem;">
                                 <h4 style="margin-bottom: 1rem; color: var(--primary);">Format Proyek:</h4>
@@ -2330,18 +2417,19 @@
                             </div>
                             <a href="#contact" class="btn btn-primary" style="margin-top: 1.5rem;">Tanyakan Tentang Proyek Ini</a>
                         </div>
+                        </div>
 
                         <!-- Chinese Content -->
                         <div class="content-zh">
                             <h3 class="project-title">贝多芬二百周年世界项目（2027–2028）</h3>
                             <p class="project-description">
-                                为纪念路德维希·范·贝多芬逝世二百周年，YMJ STAGE发起了一项以贝多芬小提琴与钢琴作品为核心的长期艺术计划。本计划体现YMJ对以艺术家为主导、具历史深度的古典音乐项目的长期承诺。
+                                为纪念路德维希·范·贝多芬逝世二百周年而举办的全球演出周期，通过精心策划的音乐会节目呈现完整的小提琴与钢琴曲目。
                             </p>
                             <div style="margin-top: 1.5rem;">
                                 <h4 style="margin-bottom: 1rem; color: var(--primary);">项目形式：</h4>
                                 <ul style="list-style: none; padding: 0;">
                                     <li style="margin-bottom: 0.5rem;">• 单场独奏会</li>
-                                    <li style="margin-bottom: 0.5rem;">• 短期系列（2–3场音乐会）</li>
+                                    <li style="margin-bottom: 0.5rem;">• 短期系列（2–3 场音乐会）</li>
                                     <li style="margin-bottom: 0.5rem;">• 完整周期</li>
                                     <li>• 扩展形式（讲座、大师班、驻院项目）</li>
                                 </ul>
@@ -2436,7 +2524,6 @@
                                 <label for="feedback">Additional Feedback</label>
                                 <textarea id="feedback" name="feedback" rows="4" placeholder="Share your thoughts with us..."></textarea>
                             </div>
-
                             <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Survey</button>
                         </form>
                     </div>
@@ -2456,13 +2543,13 @@
                             </div>
 
                             <div class="survey-question">
-                                <h4>Acara apa yang paling menarik bagi Anda?</h4>
+                                <h4>Acara apa yang paling menarik Anda?</h4>
                                 <div class="checkbox-group">
                                     <label><input type="checkbox" name="interests" value="classical-concerts"> Konser Klasik</label>
-                                    <label><input type="checkbox" name="interests" value="masterclasses"> Masterclass</label>
-                                    <label><input type="checkbox" name="interests" value="workshops"> Workshop</label>
-                                    <label><input type="checkbox" name="interests" value="lectures"> Kuliah</label>
-                                    <label><input type="checkbox" name="interests" value="community-events"> Acara Komunitas</label>
+                                    <label><input type="checkbox" name="interests" value="masterclasses"> Masterclasses</label>
+                                    <label><input type="checkbox" name="interests" value="workshops"> Workshops</label>
+                                    <label><input type="checkbox" name="interests" value="lectures"> Lectures</label>
+                                    <label><input type="checkbox" name="interests" value="community-events"> Community Events</label>
                                 </div>
                             </div>
 
@@ -2486,7 +2573,7 @@
                                 <textarea id="feedback-id" name="feedback" rows="4" placeholder="Bagikan pemikiran Anda dengan kami..."></textarea>
                             </div>
 
-                            <button type="submit" class="btn btn-primary" style="width: 100%;">Kirim Survei</button>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Survey</button>
                         </form>
                     </div>
                     <!-- Chinese Content -->
@@ -2508,8 +2595,8 @@
                                 <h4>您最感兴趣的活动类型是什么？</h4>
                                 <div class="checkbox-group">
                                     <label><input type="checkbox" name="interests" value="classical-concerts"> 古典音乐会</label>
-                                    <label><input type="checkbox" name="interests" value="masterclasses"> 大师班</label>
-                                    <label><input type="checkbox" name="interests" value="workshops"> 工作坊</label>
+                                    <label><input type="checkbox" name="interests" value="masterclasses"> Masterclasses</label>
+                                    <label><input type="checkbox" name="interests" value="workshops"> Workshops</label>
                                     <label><input type="checkbox" name="interests" value="lectures"> 讲座</label>
                                     <label><input type="checkbox" name="interests" value="community-events"> 社区活动</label>
                                 </div>
@@ -2519,8 +2606,8 @@
                                 <h4>您希望多久收到我们的消息？</h4>
                                 <div class="radio-group">
                                     <label><input type="radio" name="frequency" value="weekly" required> 每周</label>
-                                    <label><input type="radio" name="frequency" value="monthly"> 每月</label>
-                                    <label><input type="radio" name="frequency" value="quarterly"> 每季度</label>
+                                    <label><input type="radio" name="frequency" value="monthly"> 月刊</label>
+                                    <label><input type="radio" name="frequency" value="quarterly"> 季度</label>
                                     <label><input type="radio" name="frequency" value="rarely"> 仅重大活动</label>
                                 </div>
                             </div>
@@ -2537,113 +2624,6 @@
 
                             <button type="submit" class="btn btn-primary" style="width: 100%;">提交调查</button>
                         </form>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Community Section -->
-        <section id="community" class="community">
-            <div class="container">
-                <h2 class="section-title" data-lang="community-title">Join Our Community</h2>
-                
-                <div class="community-grid">
-                    <!-- Indonesian Artists -->
-                    <div class="community-card fade-in">
-                        <i class="fas fa-music"></i>
-                        <!-- English Content -->
-                        <div class="content-en active">
-                            <h3>For Indonesian Artists</h3>
-                            <p>Discover opportunities, representation, masterclasses, competitions, and performance platforms.</p>
-                        </div>
-                        <!-- Indonesian Content -->
-                        <div class="content-id">
-                            <h3>Bagi Seniman Indonesia</h3>
-                            <p>Temukan peluang, perwakilan, masterclass, kompetisi, dan platform pertunjukan.</p>
-                        </div>
-                        <!-- Chinese Content -->
-                        <div class="content-zh">
-                            <h3>对于印尼艺术家</h3>
-                            <p>发现机会、经纪服务、大师班、比赛和演出平台。</p>
-                        </div>
-                    </div>
-
-                    <!-- International Artists -->
-                    <div class="community-card fade-in">
-                        <i class="fas fa-globe"></i>
-                        <!-- English Content -->
-                        <div class="content-en active">
-                            <h3>For International Artists</h3>
-                            <p>Partner with us — explore how you can perform, teach, collaborate, or tour in Indonesia.</p>
-                        </div>
-                        <!-- Indonesian Content -->
-                        <div class="content-id">
-                            <h3>Bagi Seniman Internasional</h3>
-                            <p>Berkolaborasi dengan kami — jelajahi bagaimana Anda dapat tampil, mengajar, atau berkolaborasi di Indonesia.</p>
-                        </div>
-                        <!-- Chinese Content -->
-                        <div class="content-zh">
-                            <h3>对于国际艺术家</h3>
-                            <p>与我们合作 — 探索如何在印尼演出、教学、合作或巡演。</p>
-                        </div>
-                    </div>
-
-                    <!-- Institutions -->
-                    <div class="community-card fade-in">
-                        <i class="fas fa-building"></i>
-                        <!-- English Content -->
-                        <div class="content-en active">
-                            <h3>For Institutions & Organizers</h3>
-                            <p>We provide curation, advisory, booking support, and project development services.</p>
-                        </div>
-                        <!-- Indonesian Content -->
-                        <div class="content-id">
-                            <h3>Bagi Lembaga & Penyelenggara</h3>
-                            <p>Kami menyediakan kurasi, konsultasi, dukungan pemesanan, dan pengembangan proyek.</p>
-                        </div>
-                        <!-- Chinese Content -->
-                        <div class="content-zh">
-                            <h3>对于机构与组织者</h3>
-                            <p>我们提供策展、咨询、预订支持和项目开发服务。</p>
-                        </div>
-                    </div>
-
-                    <!-- Supporters -->
-                    <div class="community-card fade-in">
-                        <i class="fas fa-heart"></i>
-                        <!-- English Content -->
-                        <div class="content-en active">
-                            <h3>For Friends & Supporters</h3>
-                            <p>Stay connected — join our community and support the arts in Indonesia.</p>
-                        </div>
-                        <!-- Indonesian Content -->
-                        <div class="content-id">
-                            <h3>Bagi Sahabat & Pendukung</h3>
-                            <p>Tetap terhubung — bergabunglah dengan komunitas kami dan dukung seni di Indonesia.</p>
-                        </div>
-                        <!-- Chinese Content -->
-                        <div class="content-zh">
-                            <h3>对于朋友与支持者</h3>
-                            <p>保持联系 — 加入我们的社区，支持印尼的艺术发展。</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="text-align: center; margin-top: 3rem;">
-                    <!-- English Content -->
-                    <div class="content-en active">
-                        <a href="#contact" class="btn btn-primary">Become a Friend</a>
-                        <a href="#contact" class="btn btn-secondary" style="margin-left: 1rem;">Contribute / Participate</a>
-                    </div>
-                    <!-- Indonesian Content -->
-                    <div class="content-id">
-                        <a href="#contact" class="btn btn-primary">Menjadi Sahabat</a>
-                        <a href="#contact" class="btn btn-secondary" style="margin-left: 1rem;">Berkontribusi / Berpartisipasi</a>
-                    </div>
-                    <!-- Chinese Content -->
-                    <div class="content-zh">
-                        <a href="#contact" class="btn btn-primary">成为朋友</a>
-                        <a href="#contact" class="btn btn-secondary" style="margin-left: 1rem;">贡献/参与</a>
                     </div>
                 </div>
             </div>
@@ -2672,20 +2652,6 @@
                                     <p>www.yayasanmusikjakarta.org/ymj-stage</p>
                                 </div>
                             </div>
-                            <div class="contact-item">
-                                <i class="fas fa-phone"></i>
-                                <div>
-                                    <h4>Phone</h4>
-                                    <p>+62 811-9892-413</p>
-                                </div>
-                            </div>
-                            <div class="contact-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <div>
-                                    <h4>Address</h4>
-                                    <p>Jl. Letnan Sutopo Kav III A No. 10, Lengkong Wetan, Kec. Serpong, Kota Tangerang Selatan, Banten 15322</p>
-                                </div>
-                            </div>
                         </div>
 
                         <!-- Indonesian Content -->
@@ -2695,27 +2661,6 @@
                                 <div>
                                     <h4>Email</h4>
                                     <p>info@yayasanmusikjakarta.org</p>
-                                </div>
-                            </div>
-                            <div class="contact-item">
-                                <i class="fas fa-globe"></i>
-                                <div>
-                                    <h4>Website</h4>
-                                    <p>www.yayasanmusikjakarta.org/ymj-stage</p>
-                                </div>
-                            </div>
-                            <div class="contact-item">
-                                <i class="fas fa-phone"></i>
-                                <div>
-                                    <h4>Telepon</h4>
-                                    <p>+62 811-9892-413</p>
-                                </div>
-                            </div>
-                            <div class="contact-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <div>
-                                    <h4>Alamat</h4>
-                                    <p>Jl. Letnan Sutopo Kav III A No. 10, Lengkong Wetan, Kec. Serpong, Kota Tangerang Selatan, Banten 15322</p>
                                 </div>
                             </div>
                         </div>
@@ -2729,128 +2674,6 @@
                                     <p>info@yayasanmusikjakarta.org</p>
                                 </div>
                             </div>
-                            <div class="contact-item">
-                                <i class="fas fa-globe"></i>
-                                <div>
-                                    <h4>网站</h4>
-                                    <p>www.yayasanmusikjakarta.org/ymj-stage</p>
-                                </div>
-                            </div>
-                            <div class="contact-item">
-                                <i class="fas fa-phone"></i>
-                                <div>
-                                    <h4>电话</h4>
-                                    <p>+62 811-9892-413</p>
-                                </div>
-                            </div>
-                            <div class="contact-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <div>
-                                    <h4>地址</h4>
-                                    <p>雅加达，印度尼西亚</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="contact-form">
-                        <!-- English Content -->
-                        <div class="content-en active">
-                            <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Send us a message</h3>
-                            <div class="form-message" id="contactMessage"></div>
-                            <form name="contact" method="POST" data-netlify="true">
-                                <input type="hidden" name="form-name" value="contact">
-                                <div class="form-group">
-                                    <label for="name">Name *</label>
-                                    <input type="text" id="name" name="name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">Email *</label>
-                                    <input type="email" id="email" name="email" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="phone">Phone</label>
-                                    <input type="tel" id="phone" name="phone">
-                                </div>
-                                <div class="form-group">
-                                    <label for="subject">Subject *</label>
-                                    <input type="text" id="subject" name="subject" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="message">Message *</label>
-                                    <textarea id="message" name="message" rows="5" required></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                                    Send Message
-                                    <span class="spinner"></span>
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- Indonesian Content -->
-                        <div class="content-id">
-                            <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Kirim pesan kepada kami</h3>
-                            <div class="form-message" id="contactMessage-id"></div>
-                            <form name="contact" method="POST" data-netlify="true">
-                                <input type="hidden" name="form-name" value="contact">
-                                <div class="form-group">
-                                    <label for="name-id">Nama *</label>
-                                    <input type="text" id="name-id" name="name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="email-id">Email *</label>
-                                    <input type="email" id="email-id" name="email" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="phone-id">Telepon</label>
-                                    <input type="tel" id="phone-id" name="phone">
-                                </div>
-                                <div class="form-group">
-                                    <label for="subject-id">Subjek *</label>
-                                    <input type="text" id="subject-id" name="subject" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="message-id">Pesan *</label>
-                                    <textarea id="message-id" name="message" rows="5" required></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                                    Kirim Pesan
-                                    <span class="spinner"></span>
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- Chinese Content -->
-                        <div class="content-zh">
-                            <h3 style="margin-bottom: 1.5rem; color: var(--primary);">发送消息给我们</h3>
-                            <div class="form-message" id="contactMessage-zh"></div>
-                            <form name="contact" method="POST" data-netlify="true">
-                                <input type="hidden" name="form-name" value="contact">
-                                <div class="form-group">
-                                    <label for="name-zh">姓名 *</label>
-                                    <input type="text" id="name-zh" name="name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="email-zh">电子邮箱 *</label>
-                                    <input type="email" id="email-zh" name="email" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="phone-zh">电话</label>
-                                    <input type="tel" id="phone-zh" name="phone">
-                                </div>
-                                <div class="form-group">
-                                    <label for="subject-zh">主题 *</label>
-                                    <input type="text" id="subject-zh" name="subject" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="message-zh">消息 *</label>
-                                    <textarea id="message-zh" name="message" rows="5" required></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                                    发送消息
-                                    <span class="spinner"></span>
-                                </button>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -2893,7 +2716,7 @@
     </div>
 
     <!-- Full Gallery Modal -->
-    <div id="fullGalleryModal" class="full-gallery-modal">
+    <div id="full-gallery-modal" class="full-gallery-modal">
         <div class="full-gallery-content">
             <div class="full-gallery-header">
                 <h2>Complete Gallery</h2>
@@ -2901,8 +2724,8 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="full-gallery-grid" id="fullGalleryGrid">
-                <!-- All gallery images will be displayed here -->
+            <div class="full-gallery-grid" id="full-gallery-grid">
+                <!-- Gallery images will be displayed here -->
             </div>
         </div>
     </div>
@@ -2952,24 +2775,6 @@
         function closeAdminLogin() {
             document.getElementById('adminLogin').classList.remove('active');
         }
-
-        // Handle admin login
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const password = document.getElementById('adminPassword').value;
-            
-            if (password === ADMIN_PASSWORD) {
-                isLoggedIn = true;
-                localStorage.setItem('ymjAdminLoggedIn', 'true');
-                closeAdminLogin();
-                toggleAdminDashboard();
-                document.getElementById('adminPassword').value = '';
-                document.getElementById('adminToggle').classList.add('logged-in');
-            } else {
-                alert('Incorrect password. Please try again.');
-                document.getElementById('adminPassword').value = '';
-            }
-        });
 
         // Toggle admin dashboard
         function toggleAdminDashboard() {
@@ -3031,159 +2836,8 @@
                 case IMAGE_KEYS.gallery:
                     updateGalleryDisplay(imageData);
                     break;
-            }
-        }
-
-        // Update logo display
-        function updateLogoDisplay(imageData) {
-            if (imageData) {
-                document.getElementById('headerLogo').src = imageData.src;
-                document.getElementById('headerLogo').style.display = 'block';
-                document.getElementById('currentLogo').src = imageData.src;
-                document.getElementById('currentLogo').style.display = 'block';
-                document.getElementById('logoPlaceholder').style.display = 'none';
-                document.getElementById('logoInfo').style.display = 'block';
-                document.getElementById('logoInfo').textContent = imageData.name;
-            } else {
-                document.getElementById('headerLogo').style.display = 'none';
-                document.getElementById('currentLogo').style.display = 'none';
-                document.getElementById('logoPlaceholder').style.display = 'flex';
-                document.getElementById('logoInfo').style.display = 'none';
-            }
-        }
-
-        // Update background display
-        function updateBackgroundDisplay(imageData) {
-            if (imageData) {
-                document.getElementById('heroBg').style.backgroundImage = `url(${imageData.src})`;
-                document.getElementById('currentBackground').src = imageData.src;
-                document.getElementById('currentBackground').style.display = 'block';
-                document.getElementById('backgroundPlaceholder').style.display = 'none';
-                document.getElementById('backgroundInfo').style.display = 'block';
-                document.getElementById('backgroundInfo').textContent = imageData.name;
-            } else {
-                document.getElementById('heroBg').style.backgroundImage = 'none';
-                document.getElementById('currentBackground').style.display = 'none';
-                document.getElementById('backgroundPlaceholder').style.display = 'flex';
-                document.getElementById('backgroundInfo').style.display = 'none';
-            }
-        }
-
-        // Update splash logo display
-        function updateSplashLogoDisplay(imageData) {
-            if (imageData) {
-                document.getElementById('splashLogoImg').src = imageData.src;
-                document.getElementById('splashLogoImg').style.display = 'block';
-                document.getElementById('currentSplashLogo').src = imageData.src;
-                document.getElementById('currentSplashLogo').style.display = 'block';
-                document.getElementById('splashLogoPlaceholder').style.display = 'none';
-                document.getElementById('splashLogoInfo').style.display = 'block';
-                document.getElementById('splashLogoInfo').textContent = imageData.name;
-            } else {
-                document.getElementById('splashLogoImg').style.display = 'none';
-                document.getElementById('currentSplashLogo').style.display = 'none';
-                document.getElementById('splashLogoPlaceholder').style.display = 'flex';
-                document.getElementById('splashLogoInfo').style.display = 'none';
-            }
-        }
-
-        // Update Beethoven display
-        function updateBeethovenDisplay(imageData) {
-            if (imageData) {
-                document.getElementById('beethovenProjectImg').src = imageData.src;
-                document.getElementById('beethovenProjectImg').style.display = 'block';
-                document.getElementById('beethovenProjectPlaceholder').style.display = 'none';
-                document.getElementById('currentBeethoven').src = imageData.src;
-                document.getElementById('currentBeethoven').style.display = 'block';
-                document.getElementById('beethovenPlaceholder').style.display = 'none';
-                document.getElementById('beethovenInfo').style.display = 'block';
-                document.getElementById('beethovenInfo').textContent = imageData.name;
-            } else {
-                document.getElementById('beethovenProjectImg').style.display = 'none';
-                document.getElementById('beethovenProjectPlaceholder').style.display = 'flex';
-                document.getElementById('currentBeethoven').style.display = 'none';
-                document.getElementById('beethovenPlaceholder').style.display = 'flex';
-                document.getElementById('beethovenInfo').style.display = 'none';
-            }
-        }
-
-        // Update Beethoven detail display
-        function updateBeethovenDetailDisplay(imageData) {
-            if (imageData) {
-                document.getElementById('beethovenDetailImg').src = imageData.src;
-                document.getElementById('beethovenDetailImg').style.display = 'block';
-                document.getElementById('beethovenDetailPlaceholder').style.display = 'none';
-                document.getElementById('currentBeethovenDetail').src = imageData.src;
-                document.getElementById('currentBeethovenDetail').style.display = 'block';
-                document.getElementById('beethovenDetailPlaceholder').style.display = 'none';
-                document.getElementById('beethovenDetailInfo').style.display = 'block';
-                document.getElementById('beethovenDetailInfo').textContent = imageData.name;
-            } else {
-                document.getElementById('beethovenDetailImg').style.display = 'none';
-                document.getElementById('beethovenDetailPlaceholder').style.display = 'flex';
-                document.getElementById('currentBeethovenDetail').style.display = 'none';
-                document.getElementById('beethovenDetailPlaceholder').style.display = 'flex';
-                document.getElementById('beethovenDetailInfo').style.display = 'none';
-            }
-        }
-
-        // Update Jap-Yeo display
-        function updateJapYeoDisplay(imageData) {
-            if (imageData) {
-                document.getElementById('japYeoImg').src = imageData.src;
-                document.getElementById('japYeoImg').style.display = 'block';
-                document.getElementById('japYeoPlaceholder').style.display = 'none';
-                document.getElementById('currentJapYeo').src = imageData.src;
-                document.getElementById('currentJapYeo').style.display = 'block';
-                document.getElementById('japYeoPlaceholder').style.display = 'none';
-                document.getElementById('japYeoInfo').style.display = 'block';
-                document.getElementById('japYeoInfo').textContent = imageData.name;
-            } else {
-                document.getElementById('japYeoImg').style.display = 'none';
-                document.getElementById('japYeoPlaceholder').style.display = 'flex';
-                document.getElementById('currentJapYeo').style.display = 'none';
-                document.getElementById('japYeoPlaceholder').style.display = 'flex';
-                document.getElementById('japYeoInfo').style.display = 'none';
-            }
-        }
-
-        // Update Kuei Pin display
-        function updateKueiPinDisplay(imageData) {
-            if (imageData) {
-                document.getElementById('kueiPinImg').src = imageData.src;
-                document.getElementById('kueiPinImg').style.display = 'block';
-                document.getElementById('kueiPinPlaceholder').style.display = 'none';
-                document.getElementById('currentKueiPin').src = imageData.src;
-                document.getElementById('currentKueiPin').style.display = 'block';
-                document.getElementById('kueiPinPlaceholder').style.display = 'none';
-                document.getElementById('kueiPinInfo').style.display = 'block';
-                document.getElementById('kueiPinInfo').textContent = imageData.name;
-            } else {
-                document.getElementById('kueiPinImg').style.display = 'none';
-                document.getElementById('kueiPinPlaceholder').style.display = 'flex';
-                document.getElementById('currentKueiPin').style.display = 'none';
-                document.getElementById('kueiPinPlaceholder').style.display = 'flex';
-                document.getElementById('kueiPinInfo').style.display = 'none';
-            }
-        }
-
-        // Update Jap Tji display
-        function updateJapTjiDisplay(imageData) {
-            if (imageData) {
-                document.getElementById('japTjiImg').src = imageData.src;
-                document.getElementById('japTjiImg').style.display = 'block';
-                document.getElementById('japTjiPlaceholder').style.display = 'none';
-                document.getElementById('currentJapTji').src = imageData.src;
-                document.getElementById('currentJapTji').style.display = 'block';
-                document.getElementById('japTjiPlaceholder').style.display = 'none';
-                document.getElementById('japTjiInfo').style.display = 'block';
-                document.getElementById('japTjiInfo').textContent = imageData.name;
-            } else {
-                document.getElementById('japTjiImg').style.display = 'none';
-                document.getElementById('japTjiPlaceholder').style.display = 'flex';
-                document.getElementById('currentJapTji').style.display = 'none';
-                document.getElementById('japTjiPlaceholder').style.display = 'flex';
-                document.getElementById('japTjiInfo').style.display = 'none';
+                default:
+                    console.error('Unknown image key:', key);
             }
         }
 
@@ -3197,7 +2851,7 @@
             galleryGrid.innerHTML = '';
             
             if (galleryData && galleryData.length > 0) {
-                // Show only first 10 images in main gallery
+                // Show first 10 images in main gallery
                 const displayCount = Math.min(10, galleryData.length);
                 
                 for (let i = 0; i < displayCount; i++) {
@@ -3217,36 +2871,32 @@
                 // Update counts
                 visibleCount.textContent = displayCount;
                 totalCount.textContent = galleryData.length;
-                
-                // Show/hide gallery info based on total count
-                const galleryInfo = document.getElementById('galleryInfo');
-                if (galleryData.length > 10) {
-                    galleryInfo.style.display = 'block';
-                } else {
-                    galleryInfo.style.display = 'none';
-                }
             } else {
-                // Show placeholders if no gallery images
-                for (let i = 1; i <= 4; i++) {
+                // Show placeholder if no images
+                for (let i = 0; i < 4; i++) {
                     const galleryItem = document.createElement('div');
                     galleryItem.className = 'gallery-item';
                     galleryItem.innerHTML = `
                         <div class="placeholder-image">
-                            <span>No gallery image ${i}</span>
+                            <span>No gallery image ${i + 1}</span>
                         </div>
                     `;
                     galleryGrid.appendChild(galleryItem);
                 }
                 
-                // Hide gallery info
-                document.getElementById('galleryInfo').style.display = 'none';
+                // Update counts
+                visibleCount.textContent = '0';
+                totalCount.textContent = '0';
             }
+            
+            // Update gallery manager
+            updateGalleryManager();
         }
 
         // Open full gallery modal
         function openFullGallery() {
-            const modal = document.getElementById('fullGalleryModal');
-            const fullGalleryGrid = document.getElementById('fullGalleryGrid');
+            const modal = document.getElementById('full-gallery-modal');
+            const fullGalleryGrid = document.getElementById('full-gallery-grid');
             const galleryData = loadImage(IMAGE_KEYS.gallery) || [];
             
             // Clear existing content
@@ -3270,57 +2920,7 @@
 
         // Close full gallery modal
         function closeFullGallery() {
-            document.getElementById('fullGalleryModal').style.display = 'none';
-        }
-
-        // Load all images
-        function loadAllImages() {
-            // Load all image types
-            Object.values(IMAGE_KEYS).forEach(key => {
-                const imageData = loadImage(key);
-                if (imageData) {
-                    if (key === IMAGE_KEYS.gallery) {
-                        updateGalleryDisplay(imageData);
-                    } else {
-                        updateImageDisplay(key, imageData);
-                    }
-                }
-            });
-
-            // Update gallery manager
-            updateGalleryManager();
-        }
-
-        // Update gallery manager in admin panel
-        function updateGalleryManager() {
-            const galleryData = loadImage(IMAGE_KEYS.gallery) || [];
-            const galleryManager = document.getElementById('galleryManager');
-            const totalGalleryCount = document.getElementById('totalGalleryCount');
-            
-            galleryManager.innerHTML = '';
-            
-            if (galleryData.length > 0) {
-                galleryData.forEach((imageData, index) => {
-                    const imageItem = document.createElement('div');
-                    imageItem.className = 'current-image';
-                    imageItem.innerHTML = `
-                        <img src="${imageData.src}" alt="${imageData.name}">
-                        <div class="image-info">${imageData.name}</div>
-                        <div class="image-actions">
-                            <button onclick="deleteGalleryImage(${index})" title="Delete">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                    galleryManager.appendChild(imageItem);
-                });
-                
-                // Update total count
-                totalGalleryCount.textContent = galleryData.length;
-            } else {
-                galleryManager.innerHTML = '<p style="text-align: center; color: var(--text-light);">No gallery images uploaded</p>';
-                totalGalleryCount.textContent = '0';
-            }
+            document.getElementById('full-gallery-modal').style.display = 'none';
         }
 
         // Delete gallery image
@@ -3329,33 +2929,54 @@
                 let galleryData = loadImage(IMAGE_KEYS.gallery) || [];
                 galleryData.splice(index, 1);
                 saveImage(IMAGE_KEYS.gallery, galleryData);
-                updateGalleryManager();
                 updateGalleryDisplay(galleryData);
+                updateGalleryManager();
             }
         }
 
-        // Handle file upload
-        function handleFileUpload(input, key) {
-            const file = input.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imageData = {
-                        src: e.target.result,
-                        name: file.name,
-                        uploadDate: new Date().toISOString()
-                    };
-                    saveImage(key, imageData);
-                };
-                reader.readAsDataURL(file);
+        // Update gallery manager
+        function updateGalleryManager() {
+            const galleryManager = document.getElementById('galleryManager');
+            const totalGalleryCount = document.getElementById('totalGalleryCount');
+            const galleryData = loadImage(IMAGE_KEYS.gallery) || [];
+            
+            // Update total count
+            totalGalleryCount.textContent = galleryData.length;
+            
+            // Clear existing content
+            galleryManager.innerHTML = '';
+            
+            if (galleryData.length > 0) {
+                // Display gallery images with delete buttons
+                galleryData.forEach((imageData, index) => {
+                    const imageItem = document.createElement('div');
+                    imageItem.className = 'current-image';
+                    imageItem.innerHTML = `
+                        <img src="${imageData.src}" alt="${imageData.name}">
+                        <div class="image-actions">
+                            <button onclick="deleteGalleryImage(${index})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    galleryManager.appendChild(imageItem);
+                });
+            } else {
+                // Show message if no images
+                galleryManager.innerHTML = '<p style="text-align: center; color: var(--text-light); font-size: 0.9rem;">No gallery images uploaded yet</p>';
             }
         }
 
-        // Handle multiple file upload for gallery
+        // Handle file upload for gallery (multiple files)
         function handleGalleryUpload(input) {
             const files = input.files;
-            let galleryData = loadImage(IMAGE_KEYS.gallery) || [];
             
+            if (files.length === 0) return;
+            
+            let galleryData = loadImage(IMAGE_KEYS.gallery) || [];
+            let processedCount = 0;
+            
+            // Process each file
             Array.from(files).forEach(file => {
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
@@ -3366,12 +2987,32 @@
                             name: file.name,
                             uploadDate: new Date().toISOString()
                         };
+                        
                         galleryData.push(imageData);
+                        processedCount++;
                         
                         // Save after all files are processed
-                        if (galleryData.length === files.length) {
+                        if (processedCount === files.length) {
                             saveImage(IMAGE_KEYS.gallery, galleryData);
                             updateGalleryDisplay(galleryData);
+                            
+                            // Show success message
+                            const successMsg = document.createElement('div');
+                            successMsg.className = 'upload-success';
+                            successMsg.textContent = `${files.length} image(s) uploaded successfully!`;
+                            successMsg.style.animation = 'slideDown 0.3s ease';
+                            successMsg.style.display = 'block';
+                            
+                            const uploadArea = document.getElementById('galleryInput').parentElement;
+                            uploadArea.appendChild(successMsg);
+                            
+                            // Reset form
+                            input.value = '';
+                            
+                            // Hide success message after 3 seconds
+                            setTimeout(() => {
+                                successMsg.style.display = 'none';
+                            }, 3000);
                         }
                     };
                     reader.readAsDataURL(file);
@@ -3381,72 +3022,285 @@
 
         // Setup file input listeners
         document.addEventListener('DOMContentLoaded', function() {
-            // Logo upload
-            document.getElementById('logoInput').addEventListener('change', function() {
-                handleFileUpload(this, IMAGE_KEYS.logo);
-            });
-
-            // Background upload
-            document.getElementById('backgroundInput').addEventListener('change', function() {
-                handleFileUpload(this, IMAGE_KEYS.background);
-            });
-
-            // Splash logo upload
-            document.getElementById('splashLogoInput').addEventListener('change', function() {
-                handleFileUpload(this, IMAGE_KEYS.splashLogo);
-            });
-
-            // Beethoven project upload
-            document.getElementById('beethovenInput').addEventListener('change', function() {
-                handleFileUpload(this, IMAGE_KEYS.beethoven);
-            });
-
-            // Beethoven detail upload
-            document.getElementById('beethovenDetailInput').addEventListener('change', function() {
-                handleFileUpload(this, IMAGE_KEYS.beethovenDetail);
-            });
-
-            // Jap-Yeo upload
-            document.getElementById('japYeoInput').addEventListener('change', function() {
-                handleFileUpload(this, IMAGE_KEYS.japYeo);
-            });
-
-            // Kuei Pin upload
-            document.getElementById('kueiPinInput').addEventListener('change', function() {
-                handleFileUpload(this, IMAGE_KEYS.kueiPin);
-            });
-
-            // Jap Tji upload
-            document.getElementById('japTjiInput').addEventListener('change', function() {
-                handleFileUpload(this, IMAGE_KEYS.japTji);
-            });
-
+            // Check admin status and load images
+            checkAdminStatus();
+            loadAllImages();
+            
             // Gallery upload
             document.getElementById('galleryInput').addEventListener('change', function() {
                 handleGalleryUpload(this);
             });
+            
+            // Setup other file inputs
+            document.getElementById('logoInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.logo);
+            });
 
-            // Check admin status and load images
-            checkAdminStatus();
-            loadAllImages();
+            document.getElementById('backgroundInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.background);
+            });
+
+            document.getElementById('splashLogoInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.splashLogo);
+            });
+
+            document.getElementById('beethovenInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.beethoven);
+            });
+
+            document.getElementById('beethovenDetailInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.beethovenDetail);
+            });
+
+            document.getElementById('japYeoInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.japYeo);
+            });
+
+            document.getElementById('kueiPinInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.kueiPin);
+            });
+
+            document.getElementById('japTjiInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.japTji);
+            });
         });
 
-        // Splash Screen functionality
-        const splashScreen = document.getElementById('splashScreen');
-        const mainContent = document.getElementById('mainContent');
-        
-        // Function to hide splash screen and show main content
-        function showMainContent() {
-            splashScreen.style.opacity = '0';
-            splashScreen.style.visibility = 'hidden';
-            mainContent.classList.add('active');
+        // Handle file upload for single images
+        function handleFileUpload(input, key) {
+            const file = input.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = {
+                        id: Date.now() + Math.random(),
+                        src: e.target.result,
+                        name: file.name,
+                        uploadDate: new Date().toISOString()
+                    };
+                    
+                    saveImage(key, imageData);
+                };
+                reader.readAsDataURL(file);
+            }
         }
-        
-        // Click event on splash screen
-        splashScreen.addEventListener('click', showMainContent);
-        
-        // Auto transition after 5 seconds
-        setTimeout(showMainContent, 5000);
+
+        // Load all images
+        function loadAllImages() {
+            // Load all image types
+            Object.values(IMAGE_KEYS).forEach(key => {
+                const imageData = loadImage(key);
+                if (imageData) {
+                    updateImageDisplay(key, imageData);
+                }
+            });
+        }
+
+        // Update specific image displays
+        function updateLogoDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('currentLogo').src = imageData.src;
+                document.getElementById('currentLogo').style.display = 'block';
+                document.getElementById('logoPlaceholder').style.display = 'none';
+                document.getElementById('logoInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+                document.getElementById('logoInfo').style.display = 'block';
+                
+                // Update header logo
+                document.getElementById('headerLogo').src = imageData.src;
+                document.getElementById('headerLogo').style.display = 'block';
+            } else {
+                document.getElementById('currentLogo').style.display = 'none';
+                document.getElementById('logoPlaceholder').style.display = 'flex';
+                document.getElementById('logoInfo').style.display = 'none';
+                
+                // Hide header logo
+                document.getElementById('headerLogo').style.display = 'none';
+            }
+        }
+
+        function updateBackgroundDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('currentBackground').src = imageData.src;
+                document.getElementById('currentBackground').style.display = 'block';
+                document.getElementById('backgroundPlaceholder').style.display = 'none';
+                document.getElementById('backgroundInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+                document.getElementById('backgroundInfo').style.display = 'block';
+                
+                // Update hero background
+                document.getElementById('heroBg').style.backgroundImage = `url(${imageData.src})`;
+            } else {
+                document.getElementById('currentBackground').style.display = 'none';
+                document.getElementById('backgroundPlaceholder').style.display = 'flex';
+                document.getElementById('backgroundInfo').style.display = 'none';
+                
+                // Remove hero background
+                document.getElementById('heroBg').style.backgroundImage = '';
+            }
+        }
+
+        function updateSplashLogoDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('currentSplashLogo').src = imageData.src;
+                document.getElementById('currentSplashLogo').style.display = 'block';
+                document.getElementById('splashLogoPlaceholder').style.display = 'none';
+                document.getElementById('splashLogoInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+                document.getElementById('splashLogoInfo').style.display = 'block';
+                
+                // Update splash logo
+                document.getElementById('splashLogoImg').src = imageData.src;
+                document.getElementById('splashLogoImg').style.display = 'block';
+            } else {
+                document.getElementById('currentSplashLogo').style.display = 'none';
+                document.getElementById('splashLogoPlaceholder').style.display = 'flex';
+                document.getElementById('splashLogoInfo').style.display = 'none';
+                
+                // Hide splash logo
+                document.getElementById('splashLogoImg').style.display = 'none';
+            }
+        }
+
+        function updateBeethovenDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('currentBeethoven').src = imageData.src;
+                document.getElementById('currentBeethoven').style.display = 'block';
+                document.getElementById('beethovenPlaceholder').style.display = 'none';
+                document.getElementById('beethovenInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+                document.getElementById('beethovenInfo').style.display = 'block';
+                
+                // Update project image
+                document.getElementById('beethovenProjectImg').src = imageData.src;
+                document.getElementById('beethovenProjectImg').style.display = 'block';
+                document.getElementById('beethovenProjectPlaceholder').style.display = 'none';
+            } else {
+                document.getElementById('currentBeethoven').style.display = 'none';
+                document.getElementById('beethovenPlaceholder').style.display = 'flex';
+                document.getElementById('beethovenInfo').style.display = 'none';
+                
+                // Hide project image
+                document.getElementById('beethovenProjectImg').style.display = 'none';
+                document.getElementById('beethovenProjectPlaceholder').style.display = 'flex';
+            }
+        }
+
+        function updateBeethovenDetailDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('currentBeethovenDetail').src = imageData.src;
+                document.getElementById('currentBeethovenDetail').style.display = 'block';
+                document.getElementById('beethovenDetailPlaceholder').style.display = 'none';
+                document.getElementById('beethovenDetailInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+                document.getElementById('beethovenDetailInfo').style.display = 'block';
+                
+                // Update detail image
+                document.getElementById('beethovenDetailImg').src = imageData.src;
+                document.getElementById('beethovenDetailImg').style.display = 'block';
+                document.getElementById('beethovenDetailPlaceholder').style.display = 'none';
+            } else {
+                document.getElementById('currentBeethovenDetail').style.display = 'none';
+                document.getElementById('beethovenDetailPlaceholder').style.display = 'flex';
+                document.getElementById('beethovenDetailInfo').style.display = 'none';
+                
+                // Hide detail image
+                document.getElementById('beethovenDetailImg').style.display = 'none';
+                document.getElementById('beethovenDetailPlaceholder').style.display = 'flex';
+            }
+        }
+
+        function updateJapYeoDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('currentJapYeo').src = imageData.src;
+                document.getElementById('currentJapYeo').style.display = 'block';
+                document.getElementById('japYeoPlaceholder').style.display = 'none';
+                document.getElementById('japYeoInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+                document.getElementById('japYeoInfo').style.display = 'block';
+                
+                // Update artist image
+                document.getElementById('japYeoImg').src = imageData.src;
+                document.getElementById('japYeoImg').style.display = 'block';
+                document.getElementById('japYeoPlaceholder').style.display = 'none';
+            } else {
+                document.getElementById('currentJapYeo').style.display = 'none';
+                document.getElementById('japYeoPlaceholder').style.display = 'flex';
+                document.getElementById('japYeoInfo').style.display = 'none';
+                
+                // Hide artist image
+                document.getElementById('japYeoImg').style.display = 'none';
+                document.getElementById('japYeoPlaceholder').style.display = 'flex';
+            }
+        }
+
+        function updateKueiPinDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('currentKueiPin').src = imageData.src;
+                document.getElementById('currentKueiPin').style.display = 'block';
+                document.getElementById('kueiPinPlaceholder').style.display = 'none';
+                document.getElementById('kueiPinInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+                document.getElementById('kueiPinInfo').style.display = 'block';
+                
+                // Update artist image
+                document.getElementById('kueiPinImg').src = imageData.src;
+                document.getElementById('kueiPinImg').style.display = 'block';
+                document.getElementById('kueiPinPlaceholder').style.display = 'none';
+            } else {
+                document.getElementById('currentKueiPin').style.display = 'none';
+                document.getElementById('kueiPinPlaceholder').style.display = 'flex';
+                document.getElementById('kueiPinInfo').style.display = 'none';
+                
+                // Hide artist image
+                document.getElementById('kueiPinImg').style.display = 'none';
+                document.getElementById('kueiPinPlaceholder').style.display = 'flex';
+            }
+        }
+
+        function updateJapTjiDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('currentJapTji').src = imageData.src;
+                document.getElementById('currentJapTji').style.display = 'block';
+                document.getElementById('japTjiPlaceholder').style.display = 'none';
+                document.getElementById('japTjiInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+                document.getElementById('japTjiInfo').style.display = 'block';
+                
+                // Update artist image
+                document.getElementById('japTjiImg').src = imageData.src;
+                document.getElementById('japTjiImg').style.display = 'block';
+                document.getElementById('japTjiPlaceholder').style.display = 'none';
+            } else {
+                document.getElementById('currentJapTji').style.display = 'none';
+                document.getElementById('japTjiPlaceholder').style.display = 'flex';
+                document.getElementById('japTjiInfo').style.display = 'none';
+                
+                // Hide artist image
+                document.getElementById('japTjiImg').style.display = 'none';
+                document.getElementById('japTjiPlaceholder').style.display = 'flex';
+            }
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                isLoggedIn = true;
+                localStorage.setItem('ymjAdminLoggedIn', 'true');
+                document.getElementById('adminToggle').classList.add('logged-in');
+                closeAdminLogin();
+                toggleAdminDashboard();
+            } else {
+                alert('Incorrect password. Please try again.');
+            }
+        });
+
+        // Image Modal
+        function openImageModal(imageUrl) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'block';
+            modalImg.src = imageUrl;
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
 
         // Language translations
         const translations = {
@@ -3477,7 +3331,7 @@
                 'nav-home': 'Beranda',
                 'nav-about': 'Tentang',
                 'nav-events': 'Acara',
-                'nav-artists': 'Seniman',
+                'nav-artists': 'Artis',
                 'nav-beethoven': 'Beethoven 2027',
                 'nav-gallery': 'Galeri',
                 'nav-community': 'Komunitas',
@@ -3486,12 +3340,12 @@
                 'events-title': 'Acara Kami',
                 'project-title': 'Proyek Unggulan',
                 'gallery-title': 'Galeri',
-                'artists-title': 'Seniman Kami',
-                'beethoven-title': 'Inisiatif Beethoven Bicentennial',
+                'artists-title': 'Artis Kami',
+                'beethoven-title': 'Inisiatif Dua Abad Beethoven',
                 'community-title': 'Bergabung dengan Komunitas',
                 'contact-title': 'Hubungi Kami',
                 'newsletter-title': 'Tetap Terhubung',
-                'survey-title': 'Survei Audiens',
+                'survey-title': 'Survei Penonton',
                 'bio': 'Biografi',
                 'repertoire': 'Repertoar',
                 'media': 'Media'
@@ -3502,15 +3356,15 @@
                 'nav-events': '活动',
                 'nav-artists': '艺术家',
                 'nav-beethoven': '贝多芬2027',
-                'nav-gallery': '图库',
+                'nav-gallery': '画廊',
                 'nav-community': '社区',
                 'nav-contact': '联系',
                 'mission-title': '我们的使命',
                 'events-title': '我们的活动',
                 'project-title': '特色项目',
-                'gallery-title': '图库',
+                'gallery-title': '画廊',
                 'artists-title': '我们的艺术家',
-                'beethoven-title': '贝多芬二百周年计划',
+                'beethoven-title': '贝多芬二百周年倡议',
                 'community-title': '加入我们的社区',
                 'contact-title': '联系我们',
                 'newsletter-title': '保持联系',
@@ -3561,112 +3415,51 @@
             currentLang = lang;
         }
 
-        // Mobile menu toggle
-        document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
-            document.querySelector('.nav-menu').classList.toggle('active');
-        });
-
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    // Close mobile menu if open
-                    document.querySelector('.nav-menu').classList.remove('active');
-                }
-            });
-        });
-
-        // Fade in animation on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Header scroll effect
-        let lastScroll = 0;
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset;
-            const header = document.querySelector('header');
+        // Splash screen functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const splashScreen = document.getElementById('splashScreen');
+            const mainContent = document.getElementById('mainContent');
             
-            if (currentScroll <= 0) {
-                header.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-            } else {
-                header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+            // Add click event to splash screen to hide it
+            splashScreen.addEventListener('click', function() {
+                splashScreen.style.opacity = '0';
+                splashScreen.style.visibility = 'hidden';
+                mainContent.classList.add('active');
+            });
+            
+            // Also add click event to splash content
+            document.querySelector('.splash-content').addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent event bubbling
+                splashScreen.style.opacity = '0';
+                splashScreen.style.visibility = 'hidden';
+                mainContent.classList.add('active');
+            });
+            
+            // Initialize page
+            checkAdminStatus();
+            loadAllImages();
+            switchLanguage('en');
+            
+            // Add smooth page load
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const imageModal = document.getElementById('imageModal');
+            const fullGalleryModal = document.getElementById('full-gallery-modal');
+            
+            if (event.target == imageModal) {
+                closeImageModal();
             }
             
-            lastScroll = currentScroll;
-        });
-
-        // Form submission handling
-        function handleFormSubmit(form, messageElement, successMessage, errorMessage) {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const submitBtn = form.querySelector('button[type="submit"]');
-                const spinner = submitBtn.querySelector('.spinner');
-                
-                // Show loading state
-                submitBtn.classList.add('loading');
-                submitBtn.disabled = true;
-                
-                // Prepare form data
-                const formData = new FormData(form);
-                
-                // Submit to Netlify
-                fetch('/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams(formData).toString()
-                })
-                .then(() => {
-                    // Show success message
-                    messageElement.textContent = successMessage;
-                    messageElement.className = 'form-message success';
-                    messageElement.style.display = 'block';
-                    
-                    // Reset form
-                    form.reset();
-                    
-                    // Scroll to message
-                    messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    
-                    // Hide message after 5 seconds
-                    setTimeout(() => {
-                        messageElement.style.display = 'none';
-                    }, 5000);
-                })
-                .catch((error) => {
-                    // Show error message
-                    messageElement.textContent = errorMessage;
-                    messageElement.className = 'form-message error';
-                    messageElement.style.display = 'block';
-                    
-                    console.error('Form submission error:', error);
-                })
-                .finally(() => {
-                    // Remove loading state
-                    submitBtn.classList.remove('loading');
-                    submitBtn.disabled = false;
-                });
-            });
+            if (event.target == fullGalleryModal) {
+                closeFullGallery();
+            }
         }
 
         // Initialize form handlers
@@ -3675,7 +3468,7 @@
             const contactForms = document.querySelectorAll('form[name="contact"]');
             contactForms.forEach(form => {
                 const messageElement = form.parentElement.querySelector('.form-message');
-                const lang = form.closest('.content-en, .content-id, .content-zh').className.split(' ')[1].replace('content-', '');
+                const lang = form.closest('.content-en, .content-id, .content-zh').className.split(' ')[1].replace('active', '');
                 
                 const messages = {
                     en: {
@@ -3688,11 +3481,64 @@
                     },
                     zh: {
                         success: '感谢您的留言！我们会尽快回复您。',
-                        error: '抱歉，发送消息时出现错误。请重试。'
+                        error: '抱歉，发送消息时出错。请重试。'
                     }
                 };
                 
-                handleFormSubmit(form, messageElement, messages[lang].success, messages[lang].error);
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Show loading state
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Sending...';
+                    submitBtn.disabled = true;
+                    
+                    // Prepare form data
+                    const formData = new FormData(form);
+                    
+                    // Submit to Netlify
+                    fetch('/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams(formData).toString()
+                    })
+                    .then(() => {
+                        // Show success message
+                        messageElement.textContent = messages[lang].success;
+                        messageElement.className = 'form-message success';
+                        messageElement.style.display = 'block';
+                        
+                        // Reset form
+                        form.reset();
+                        
+                        // Reset button
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                        
+                        // Hide message after 5 seconds
+                        setTimeout(() => {
+                            messageElement.style.display = 'none';
+                        }, 5000);
+                    })
+                    .catch((error) => {
+                        // Show error message
+                        messageElement.textContent = messages[lang].error;
+                        messageElement.className = 'form-message error';
+                        messageElement.style.display = 'block';
+                        
+                        console.error('Form submission error:', error);
+                        
+                        // Reset button
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                        
+                        // Hide message after 5 seconds
+                        setTimeout(() => {
+                            messageElement.style.display = 'none';
+                        }, 5000);
+                    });
+                });
             });
 
             // Newsletter form
@@ -3773,7 +3619,7 @@
                     })
                     .then(() => {
                         // Show success
-                        submitBtn.textContent = 'Thank You!';
+                        submitBtn.textContent = 'Submitted!';
                         submitBtn.style.backgroundColor = 'var(--success)';
                         
                         // Reset form
@@ -3802,36 +3648,55 @@
                     });
                 });
             });
-        });
 
-        // Image Modal
-        function openImageModal(imageUrl) {
-            const modal = document.getElementById('imageModal');
-            const modalImg = document.getElementById('modalImage');
-            modal.style.display = 'block';
-            modalImg.src = imageUrl;
-        }
+            // Mobile menu toggle
+            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            mobileMenuToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+            });
 
-        function closeImageModal() {
-            document.getElementById('imageModal').style.display = 'none';
-        }
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        const headerHeight = document.querySelector('header').offsetHeight;
+                        const targetPosition = targetElement.offsetTop - headerHeight;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Close mobile menu if open
+                        navMenu.classList.remove('active');
+                    }
+                });
+            });
 
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('imageModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
+            // Scroll animations
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            function checkFade() {
+                fadeElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementBottom = element.getBoundingClientRect().bottom;
+                    
+                    if (elementTop < window.innerHeight && elementBottom > 0) {
+                        element.classList.add('visible');
+                    }
+                });
             }
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add smooth page load
-            document.body.style.opacity = '0';
-            setTimeout(() => {
-                document.body.style.transition = 'opacity 0.5s ease';
-                document.body.style.opacity = '1';
-            }, 100);
+            
+            window.addEventListener('scroll', checkFade);
+            checkFade(); // Check on page load
         });
     </script>
 </body>
