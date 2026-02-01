@@ -45,6 +45,319 @@
             padding: 0 20px;
         }
 
+        /* Admin Login Styles */
+        .admin-login {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .admin-login.active {
+            display: flex;
+        }
+
+        .login-form {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .login-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .login-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .login-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-login:hover {
+            background: #2c5282;
+        }
+
+        .btn-cancel {
+            background: var(--border);
+            color: var(--text-dark);
+        }
+
+        .btn-cancel:hover {
+            background: #cbd5e0;
+        }
+
+        /* Admin Dashboard Styles */
+        .admin-dashboard {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 450px;
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 9999;
+            overflow-y: auto;
+        }
+
+        .admin-dashboard.active {
+            right: 0;
+        }
+
+        .admin-header {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-header h3 {
+            color: white;
+            margin: 0;
+        }
+
+        .close-admin {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-admin:hover {
+            transform: rotate(90deg);
+        }
+
+        .admin-content {
+            padding: 1.5rem;
+        }
+
+        .admin-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .admin-section:last-child {
+            border-bottom: none;
+        }
+
+        .admin-section h4 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: var(--bg-light);
+            margin-bottom: 1rem;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(26, 54, 93, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--secondary);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-text {
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .upload-hint {
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .image-manager {
+            margin-top: 1rem;
+        }
+
+        .current-image {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--bg-light);
+            margin-bottom: 1rem;
+        }
+
+        .current-image img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-info {
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .image-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .image-actions button {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .image-actions button:hover {
+            background: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .admin-logout {
+            width: 100%;
+            padding: 12px;
+            background: var(--error);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+        }
+
+        .admin-logout:hover {
+            background: #e53e3e;
+        }
+
+        /* Admin Toggle Button */
+        .admin-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-toggle:hover {
+            background: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .admin-toggle.logged-in {
+            background: var(--secondary);
+        }
+
         /* Splash Screen Styles */
         .splash-screen {
             position: fixed;
@@ -71,6 +384,7 @@
             margin-bottom: 30px;
             cursor: pointer;
             transition: transform 0.3s ease;
+            border-radius: 10px;
         }
 
         .splash-logo:hover {
@@ -152,6 +466,7 @@
             height: 50px;
             width: auto;
             transition: transform 0.3s ease;
+            border-radius: 5px;
         }
 
         .logo-img:hover {
@@ -220,7 +535,7 @@
             min-height: 100vh;
             display: flex;
             align-items: center;
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(ymjstagebg.jpg.jpeg);
+            background: linear-gradient(135deg, var(--primary) 0%, #2c5282 100%);
             color: white;
             position: relative;
             overflow: hidden;
@@ -232,7 +547,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url(ymstagebg.jpg.jpeg) center/cover;
+            background-size: cover;
+            background-position: center;
             opacity: 0.2;
             transition: opacity 0.5s ease;
         }
@@ -1006,6 +1322,11 @@
             .year-line {
                 width: 100%;
             }
+
+            .admin-dashboard {
+                width: 100%;
+                right: -100%;
+            }
         }
 
         /* Hidden content for different languages */
@@ -1077,13 +1398,241 @@
             display: inline-block;
             margin-left: 10px;
         }
+
+        /* Placeholder styles for when no image is uploaded */
+        .placeholder-image {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
+    <!-- Admin Login Modal -->
+    <div class="admin-login" id="adminLogin">
+        <div class="login-form">
+            <h2>Admin Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="adminPassword">Password</label>
+                    <input type="password" id="adminPassword" placeholder="Enter admin password" required>
+                </div>
+                <div class="login-buttons">
+                    <button type="submit" class="btn-login">Login</button>
+                    <button type="button" class="btn-cancel" onclick="closeAdminLogin()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="admin-dashboard" id="adminDashboard">
+        <div class="admin-header">
+            <h3>Admin Panel</h3>
+            <button class="close-admin" onclick="toggleAdminDashboard()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-content">
+            <!-- Logo Management -->
+            <div class="admin-section">
+                <h4>Logo Management</h4>
+                <div class="upload-area" onclick="document.getElementById('logoInput').click()">
+                    <i class="fas fa-upload upload-icon"></i>
+                    <p class="upload-text">Upload Logo</p>
+                    <p class="upload-hint">PNG, JPG up to 5MB</p>
+                    <input type="file" id="logoInput" class="file-input" accept="image/*">
+                </div>
+                <div class="image-manager">
+                    <div class="current-image">
+                        <img id="currentLogo" src="" alt="Current Logo" style="display:none;">
+                        <div class="placeholder-image" id="logoPlaceholder">
+                            <span>No logo uploaded</span>
+                        </div>
+                        <div class="image-info" id="logoInfo" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Background Management -->
+            <div class="admin-section">
+                <h4>Background Management</h4>
+                <div class="upload-area" onclick="document.getElementById('backgroundInput').click()">
+                    <i class="fas fa-image upload-icon"></i>
+                    <p class="upload-text">Upload Background</p>
+                    <p class="upload-hint">PNG, JPG up to 5MB</p>
+                    <input type="file" id="backgroundInput" class="file-input" accept="image/*">
+                </div>
+                <div class="image-manager">
+                    <div class="current-image">
+                        <img id="currentBackground" src="" alt="Current Background" style="display:none;">
+                        <div class="placeholder-image" id="backgroundPlaceholder">
+                            <span>No background uploaded</span>
+                        </div>
+                        <div class="image-info" id="backgroundInfo" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Splash Logo Management -->
+            <div class="admin-section">
+                <h4>Splash Logo Management</h4>
+                <div class="upload-area" onclick="document.getElementById('splashLogoInput').click()">
+                    <i class="fas fa-star upload-icon"></i>
+                    <p class="upload-text">Upload Splash Logo</p>
+                    <p class="upload-hint">PNG, JPG up to 5MB</p>
+                    <input type="file" id="splashLogoInput" class="file-input" accept="image/*">
+                </div>
+                <div class="image-manager">
+                    <div class="current-image">
+                        <img id="currentSplashLogo" src="" alt="Current Splash Logo" style="display:none;">
+                        <div class="placeholder-image" id="splashLogoPlaceholder">
+                            <span>No splash logo uploaded</span>
+                        </div>
+                        <div class="image-info" id="splashLogoInfo" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Images -->
+            <div class="admin-section">
+                <h4>Beethoven Project Images</h4>
+                <div class="upload-area" onclick="document.getElementById('beethovenInput').click()">
+                    <i class="fas fa-music upload-icon"></i>
+                    <p class="upload-text">Upload Beethoven Project Image</p>
+                    <p class="upload-hint">PNG, JPG up to 5MB</p>
+                    <input type="file" id="beethovenInput" class="file-input" accept="image/*">
+                </div>
+                <div class="image-manager">
+                    <div class="current-image">
+                        <img id="currentBeethoven" src="" alt="Beethoven Project" style="display:none;">
+                        <div class="placeholder-image" id="beethovenPlaceholder">
+                            <span>No Beethoven image uploaded</span>
+                        </div>
+                        <div class="image-info" id="beethovenInfo" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Beethoven Detail Images -->
+            <div class="admin-section">
+                <h4>Beethoven Detail Images</h4>
+                <div class="upload-area" onclick="document.getElementById('beethovenDetailInput').click()">
+                    <i class="fas fa-music upload-icon"></i>
+                    <p class="upload-text">Upload Beethoven Detail Image</p>
+                    <p class="upload-hint">PNG, JPG up to 5MB</p>
+                    <input type="file" id="beethovenDetailInput" class="file-input" accept="image/*">
+                </div>
+                <div class="image-manager">
+                    <div class="current-image">
+                        <img id="currentBeethovenDetail" src="" alt="Beethoven Detail" style="display:none;">
+                        <div class="placeholder-image" id="beethovenDetailPlaceholder">
+                            <span>No Beethoven detail image uploaded</span>
+                        </div>
+                        <div class="image-info" id="beethovenDetailInfo" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artist Images -->
+            <div class="admin-section">
+                <h4>Artist Images</h4>
+                
+                <!-- Jap-Yeo Duo -->
+                <div style="margin-bottom: 1rem;">
+                    <h5 style="margin-bottom: 0.5rem; color: var(--text-dark);">Jap-Yeo Duo</h5>
+                    <div class="upload-area" onclick="document.getElementById('japYeoInput').click()">
+                        <i class="fas fa-users upload-icon"></i>
+                        <p class="upload-text">Upload Jap-Yeo Duo Image</p>
+                        <input type="file" id="japYeoInput" class="file-input" accept="image/*">
+                    </div>
+                    <div class="image-manager">
+                        <div class="current-image">
+                            <img id="currentJapYeo" src="" alt="Jap-Yeo Duo" style="display:none;">
+                            <div class="placeholder-image" id="japYeoPlaceholder">
+                                <span>No Jap-Yeo Duo image uploaded</span>
+                            </div>
+                            <div class="image-info" id="japYeoInfo" style="display:none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dr. Kuei Pin Yeo -->
+                <div style="margin-bottom: 1rem;">
+                    <h5 style="margin-bottom: 0.5rem; color: var(--text-dark);">Dr. Kuei Pin Yeo</h5>
+                    <div class="upload-area" onclick="document.getElementById('kueiPinInput').click()">
+                        <i class="fas fa-user upload-icon"></i>
+                        <p class="upload-text">Upload Dr. Kuei Pin Yeo Image</p>
+                        <input type="file" id="kueiPinInput" class="file-input" accept="image/*">
+                    </div>
+                    <div class="image-manager">
+                        <div class="current-image">
+                            <img id="currentKueiPin" src="" alt="Dr. Kuei Pin Yeo" style="display:none;">
+                            <div class="placeholder-image" id="kueiPinPlaceholder">
+                                <span>No Dr. Kuei Pin Yeo image uploaded</span>
+                            </div>
+                            <div class="image-info" id="kueiPinInfo" style="display:none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jap Tji Kien -->
+                <div style="margin-bottom: 1rem;">
+                    <h5 style="margin-bottom: 0.5rem; color: var(--text-dark);">Jap Tji Kien</h5>
+                    <div class="upload-area" onclick="document.getElementById('japTjiInput').click()">
+                        <i class="fas fa-user upload-icon"></i>
+                        <p class="upload-text">Upload Jap Tji Kien Image</p>
+                        <input type="file" id="japTjiInput" class="file-input" accept="image/*">
+                    </div>
+                    <div class="image-manager">
+                        <div class="current-image">
+                            <img id="currentJapTji" src="" alt="Jap Tji Kien" style="display:none;">
+                            <div class="placeholder-image" id="japTjiPlaceholder">
+                                <span>No Jap Tji Kien image uploaded</span>
+                            </div>
+                            <div class="image-info" id="japTjiInfo" style="display:none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gallery Management -->
+            <div class="admin-section">
+                <h4>Gallery Management</h4>
+                <div class="upload-area" onclick="document.getElementById('galleryInput').click()">
+                    <i class="fas fa-images upload-icon"></i>
+                    <p class="upload-text">Upload Gallery Images</p>
+                    <p class="upload-hint">Multiple files allowed</p>
+                    <input type="file" id="galleryInput" class="file-input" accept="image/*" multiple>
+                </div>
+                <div id="galleryManager" class="image-manager">
+                    <!-- Gallery images will be displayed here -->
+                </div>
+            </div>
+
+            <button class="admin-logout" onclick="adminLogout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- Admin Toggle Button -->
+    <button class="admin-toggle" id="adminToggle" onclick="handleAdminClick()">
+        <i class="fas fa-cog"></i>
+    </button>
+
     <!-- Splash Screen -->
     <div class="splash-screen" id="splashScreen">
         <div class="splash-content">
-            <img class="splash-logo" src="LogoYMJAMDP.png" alt="YMJ Logo" id="splashLogo">
+            <img class="splash-logo" id="splashLogoImg" src="" alt="YMJ Logo" style="display:none;">
             <div class="splash-text">YMJ STAGE</div>
             <div class="splash-subtext">Yayasan Musik Jakarta</div>
         </div>
@@ -1096,7 +1645,7 @@
         <header>
             <nav class="container">
                 <div class="logo-container">
-                    <img class="logo-img" src="LogoYMJAM.png" alt="YMJ Logo">
+                    <img class="logo-img" id="headerLogo" src="" alt="YMJ Logo" style="display:none;">
                     <a href="#" class="logo-text">YMJ STAGE</a>
                 </div>
                 <ul class="nav-menu">
@@ -1122,7 +1671,7 @@
 
         <!-- Hero Section -->
         <section id="home" class="hero">
-            <div class="hero-bg"></div>
+            <div class="hero-bg" id="heroBg"></div>
             <div class="container">
                 <div class="hero-content">
                     <!-- English Content -->
@@ -1379,7 +1928,10 @@
                 
                 <div class="project-card">
                     <div class="project-image">
-                        <img src="beethovenpict.jpg" alt="Beethoven Project">
+                        <img id="beethovenProjectImg" src="" alt="Beethoven Project" style="display:none;">
+                        <div class="placeholder-image" id="beethovenProjectPlaceholder" style="height:300px;">
+                            <span>No Beethoven project image uploaded</span>
+                        </div>
                     </div>
                     <div class="project-content">
                         <!-- English Content -->
@@ -1417,35 +1969,8 @@
         <section id="gallery" class="featured-project">
             <div class="container">
                 <h2 class="section-title" data-lang="gallery-title">Gallery</h2>
-                <div class="gallery-grid">
-                    <div class="gallery-item">
-                        <img src="Assets/emages/gallery/gallerry-1.JPG" alt="Gallery 1" onclick="openImageModal(this.src)">
-                        <div class="gallery-overlay">
-                            <h4>Concert Performance</h4>
-                            <p>Live performance at concert hall</p>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="assets/emages/gallery/gallery-2.jpg" alt="Gallery 2" onclick="openImageModal(this.src)">
-                        <div class="gallery-overlay">
-                            <h4>Rehearsal Session</h4>
-                            <p>Behind the scenes rehearsal</p>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="assets/emages/IMG_2897.jpg" alt="Gallery 3" onclick="openImageModal(this.src)">
-                        <div class="gallery-overlay">
-                            <h4>Masterclass</h4>
-                            <p>Educational masterclass session</p>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="assets/emages/gallery/gallery-4.jpg" alt="Gallery 4" onclick="openImageModal(this.src)">
-                        <div class="gallery-overlay">
-                            <h4>Collaboration</h4>
-                            <p>International collaboration project</p>
-                        </div>
-                    </div>
+                <div class="gallery-grid" id="galleryGrid">
+                    <!-- Gallery items will be dynamically added here -->
                 </div>
             </div>
         </section>
@@ -1459,7 +1984,10 @@
                     <!-- Jap-Yeo Duo -->
                     <div class="artist-card fade-in">
                         <div class="artist-image">
-                            <img src="japyeoduopict.jpg.jpeg" alt="Jap-Yeo Duo">
+                            <img id="japYeoImg" src="" alt="Jap-Yeo Duo" style="display:none;">
+                            <div class="placeholder-image" id="japYeoPlaceholder">
+                                <span>No Jap-Yeo Duo image uploaded</span>
+                            </div>
                         </div>
                         <div class="artist-info">
                             <!-- English Content -->
@@ -1509,7 +2037,10 @@
                     <!-- Dr. Kuei Pin Yeo -->
                     <div class="artist-card fade-in">
                         <div class="artist-image">
-                            <img src="kueipinyeopict.jpg.jpeg" alt="Dr. Kuei Pin Yeo">
+                            <img id="kueiPinImg" src="" alt="Dr. Kuei Pin Yeo" style="display:none;">
+                            <div class="placeholder-image" id="kueiPinPlaceholder">
+                                <span>No Dr. Kuei Pin Yeo image uploaded</span>
+                            </div>
                         </div>
                         <div class="artist-info">
                             <!-- English Content -->
@@ -1559,7 +2090,10 @@
                     <!-- Jap Tji Kien -->
                     <div class="artist-card fade-in">
                         <div class="artist-image">
-                            <img src="japtjikienpict.jpg" alt="Jap Tji Kien">
+                            <img id="japTjiImg" src="" alt="Jap Tji Kien" style="display:none;">
+                            <div class="placeholder-image" id="japTjiPlaceholder">
+                                <span>No Jap Tji Kien image uploaded</span>
+                            </div>
                         </div>
                         <div class="artist-info">
                             <!-- English Content -->
@@ -1616,7 +2150,10 @@
                 
                 <div class="project-card">
                     <div class="project-image">
-                        <img src="beethovenpict2.jpg" alt="Beethoven Project Detail">
+                        <img id="beethovenDetailImg" src="" alt="Beethoven Project Detail" style="display:none;">
+                        <div class="placeholder-image" id="beethovenDetailPlaceholder" style="height:300px;">
+                            <span>No Beethoven detail image uploaded</span>
+                        </div>
                     </div>
                     <div class="project-content">
                         <!-- English Content -->
@@ -2217,10 +2754,471 @@
     </div>
 
     <script>
+        // Admin System
+        const ADMIN_PASSWORD = 'ymjadmin2025'; // Change this to your desired password
+        let isLoggedIn = false;
+
+        // Image storage keys
+        const IMAGE_KEYS = {
+            logo: 'ymjLogo',
+            background: 'ymjBackground',
+            splashLogo: 'ymjSplashLogo',
+            beethoven: 'ymjBeethoven',
+            beethovenDetail: 'ymjBeethovenDetail',
+            japYeo: 'ymjJapYeo',
+            kueiPin: 'ymjKueiPin',
+            japTji: 'ymjJapTji',
+            gallery: 'ymjGallery'
+        };
+
+        // Check if already logged in
+        function checkAdminStatus() {
+            const adminStatus = localStorage.getItem('ymjAdminLoggedIn');
+            if (adminStatus === 'true') {
+                isLoggedIn = true;
+                document.getElementById('adminToggle').classList.add('logged-in');
+            }
+        }
+
+        // Handle admin click
+        function handleAdminClick() {
+            if (isLoggedIn) {
+                toggleAdminDashboard();
+            } else {
+                showAdminLogin();
+            }
+        }
+
+        // Show admin login modal
+        function showAdminLogin() {
+            document.getElementById('adminLogin').classList.add('active');
+        }
+
+        // Close admin login modal
+        function closeAdminLogin() {
+            document.getElementById('adminLogin').classList.remove('active');
+        }
+
+        // Handle admin login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                isLoggedIn = true;
+                localStorage.setItem('ymjAdminLoggedIn', 'true');
+                closeAdminLogin();
+                toggleAdminDashboard();
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminToggle').classList.add('logged-in');
+            } else {
+                alert('Incorrect password. Please try again.');
+                document.getElementById('adminPassword').value = '';
+            }
+        });
+
+        // Toggle admin dashboard
+        function toggleAdminDashboard() {
+            const dashboard = document.getElementById('adminDashboard');
+            dashboard.classList.toggle('active');
+            
+            if (dashboard.classList.contains('active')) {
+                loadAllImages();
+            }
+        }
+
+        // Admin logout
+        function adminLogout() {
+            isLoggedIn = false;
+            localStorage.setItem('ymjAdminLoggedIn', 'false');
+            document.getElementById('adminDashboard').classList.remove('active');
+            document.getElementById('adminToggle').classList.remove('logged-in');
+        }
+
+        // Save image to localStorage
+        function saveImage(key, imageData) {
+            localStorage.setItem(key, JSON.stringify(imageData));
+            updateImageDisplay(key, imageData);
+        }
+
+        // Load image from localStorage
+        function loadImage(key) {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : null;
+        }
+
+        // Update image display
+        function updateImageDisplay(key, imageData) {
+            switch(key) {
+                case IMAGE_KEYS.logo:
+                    updateLogoDisplay(imageData);
+                    break;
+                case IMAGE_KEYS.background:
+                    updateBackgroundDisplay(imageData);
+                    break;
+                case IMAGE_KEYS.splashLogo:
+                    updateSplashLogoDisplay(imageData);
+                    break;
+                case IMAGE_KEYS.beethoven:
+                    updateBeethovenDisplay(imageData);
+                    break;
+                case IMAGE_KEYS.beethovenDetail:
+                    updateBeethovenDetailDisplay(imageData);
+                    break;
+                case IMAGE_KEYS.japYeo:
+                    updateJapYeoDisplay(imageData);
+                    break;
+                case IMAGE_KEYS.kueiPin:
+                    updateKueiPinDisplay(imageData);
+                    break;
+                case IMAGE_KEYS.japTji:
+                    updateJapTjiDisplay(imageData);
+                    break;
+                case IMAGE_KEYS.gallery:
+                    updateGalleryDisplay(imageData);
+                    break;
+            }
+        }
+
+        // Update logo display
+        function updateLogoDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('headerLogo').src = imageData.src;
+                document.getElementById('headerLogo').style.display = 'block';
+                document.getElementById('currentLogo').src = imageData.src;
+                document.getElementById('currentLogo').style.display = 'block';
+                document.getElementById('logoPlaceholder').style.display = 'none';
+                document.getElementById('logoInfo').style.display = 'block';
+                document.getElementById('logoInfo').textContent = imageData.name;
+            } else {
+                document.getElementById('headerLogo').style.display = 'none';
+                document.getElementById('currentLogo').style.display = 'none';
+                document.getElementById('logoPlaceholder').style.display = 'flex';
+                document.getElementById('logoInfo').style.display = 'none';
+            }
+        }
+
+        // Update background display
+        function updateBackgroundDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('heroBg').style.backgroundImage = `url(${imageData.src})`;
+                document.getElementById('currentBackground').src = imageData.src;
+                document.getElementById('currentBackground').style.display = 'block';
+                document.getElementById('backgroundPlaceholder').style.display = 'none';
+                document.getElementById('backgroundInfo').style.display = 'block';
+                document.getElementById('backgroundInfo').textContent = imageData.name;
+            } else {
+                document.getElementById('heroBg').style.backgroundImage = 'none';
+                document.getElementById('currentBackground').style.display = 'none';
+                document.getElementById('backgroundPlaceholder').style.display = 'flex';
+                document.getElementById('backgroundInfo').style.display = 'none';
+            }
+        }
+
+        // Update splash logo display
+        function updateSplashLogoDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('splashLogoImg').src = imageData.src;
+                document.getElementById('splashLogoImg').style.display = 'block';
+                document.getElementById('currentSplashLogo').src = imageData.src;
+                document.getElementById('currentSplashLogo').style.display = 'block';
+                document.getElementById('splashLogoPlaceholder').style.display = 'none';
+                document.getElementById('splashLogoInfo').style.display = 'block';
+                document.getElementById('splashLogoInfo').textContent = imageData.name;
+            } else {
+                document.getElementById('splashLogoImg').style.display = 'none';
+                document.getElementById('currentSplashLogo').style.display = 'none';
+                document.getElementById('splashLogoPlaceholder').style.display = 'flex';
+                document.getElementById('splashLogoInfo').style.display = 'none';
+            }
+        }
+
+        // Update Beethoven display
+        function updateBeethovenDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('beethovenProjectImg').src = imageData.src;
+                document.getElementById('beethovenProjectImg').style.display = 'block';
+                document.getElementById('beethovenProjectPlaceholder').style.display = 'none';
+                document.getElementById('currentBeethoven').src = imageData.src;
+                document.getElementById('currentBeethoven').style.display = 'block';
+                document.getElementById('beethovenPlaceholder').style.display = 'none';
+                document.getElementById('beethovenInfo').style.display = 'block';
+                document.getElementById('beethovenInfo').textContent = imageData.name;
+            } else {
+                document.getElementById('beethovenProjectImg').style.display = 'none';
+                document.getElementById('beethovenProjectPlaceholder').style.display = 'flex';
+                document.getElementById('currentBeethoven').style.display = 'none';
+                document.getElementById('beethovenPlaceholder').style.display = 'flex';
+                document.getElementById('beethovenInfo').style.display = 'none';
+            }
+        }
+
+        // Update Beethoven detail display
+        function updateBeethovenDetailDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('beethovenDetailImg').src = imageData.src;
+                document.getElementById('beethovenDetailImg').style.display = 'block';
+                document.getElementById('beethovenDetailPlaceholder').style.display = 'none';
+                document.getElementById('currentBeethovenDetail').src = imageData.src;
+                document.getElementById('currentBeethovenDetail').style.display = 'block';
+                document.getElementById('beethovenDetailPlaceholder').style.display = 'none';
+                document.getElementById('beethovenDetailInfo').style.display = 'block';
+                document.getElementById('beethovenDetailInfo').textContent = imageData.name;
+            } else {
+                document.getElementById('beethovenDetailImg').style.display = 'none';
+                document.getElementById('beethovenDetailPlaceholder').style.display = 'flex';
+                document.getElementById('currentBeethovenDetail').style.display = 'none';
+                document.getElementById('beethovenDetailPlaceholder').style.display = 'flex';
+                document.getElementById('beethovenDetailInfo').style.display = 'none';
+            }
+        }
+
+        // Update Jap-Yeo display
+        function updateJapYeoDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('japYeoImg').src = imageData.src;
+                document.getElementById('japYeoImg').style.display = 'block';
+                document.getElementById('japYeoPlaceholder').style.display = 'none';
+                document.getElementById('currentJapYeo').src = imageData.src;
+                document.getElementById('currentJapYeo').style.display = 'block';
+                document.getElementById('japYeoPlaceholder').style.display = 'none';
+                document.getElementById('japYeoInfo').style.display = 'block';
+                document.getElementById('japYeoInfo').textContent = imageData.name;
+            } else {
+                document.getElementById('japYeoImg').style.display = 'none';
+                document.getElementById('japYeoPlaceholder').style.display = 'flex';
+                document.getElementById('currentJapYeo').style.display = 'none';
+                document.getElementById('japYeoPlaceholder').style.display = 'flex';
+                document.getElementById('japYeoInfo').style.display = 'none';
+            }
+        }
+
+        // Update Kuei Pin display
+        function updateKueiPinDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('kueiPinImg').src = imageData.src;
+                document.getElementById('kueiPinImg').style.display = 'block';
+                document.getElementById('kueiPinPlaceholder').style.display = 'none';
+                document.getElementById('currentKueiPin').src = imageData.src;
+                document.getElementById('currentKueiPin').style.display = 'block';
+                document.getElementById('kueiPinPlaceholder').style.display = 'none';
+                document.getElementById('kueiPinInfo').style.display = 'block';
+                document.getElementById('kueiPinInfo').textContent = imageData.name;
+            } else {
+                document.getElementById('kueiPinImg').style.display = 'none';
+                document.getElementById('kueiPinPlaceholder').style.display = 'flex';
+                document.getElementById('currentKueiPin').style.display = 'none';
+                document.getElementById('kueiPinPlaceholder').style.display = 'flex';
+                document.getElementById('kueiPinInfo').style.display = 'none';
+            }
+        }
+
+        // Update Jap Tji display
+        function updateJapTjiDisplay(imageData) {
+            if (imageData) {
+                document.getElementById('japTjiImg').src = imageData.src;
+                document.getElementById('japTjiImg').style.display = 'block';
+                document.getElementById('japTjiPlaceholder').style.display = 'none';
+                document.getElementById('currentJapTji').src = imageData.src;
+                document.getElementById('currentJapTji').style.display = 'block';
+                document.getElementById('japTjiPlaceholder').style.display = 'none';
+                document.getElementById('japTjiInfo').style.display = 'block';
+                document.getElementById('japTjiInfo').textContent = imageData.name;
+            } else {
+                document.getElementById('japTjiImg').style.display = 'none';
+                document.getElementById('japTjiPlaceholder').style.display = 'flex';
+                document.getElementById('currentJapTji').style.display = 'none';
+                document.getElementById('japTjiPlaceholder').style.display = 'flex';
+                document.getElementById('japTjiInfo').style.display = 'none';
+            }
+        }
+
+        // Update gallery display
+        function updateGalleryDisplay(galleryData) {
+            const galleryGrid = document.getElementById('galleryGrid');
+            galleryGrid.innerHTML = '';
+            
+            if (galleryData && galleryData.length > 0) {
+                galleryData.forEach((imageData, index) => {
+                    const galleryItem = document.createElement('div');
+                    galleryItem.className = 'gallery-item';
+                    galleryItem.innerHTML = `
+                        <img src="${imageData.src}" alt="${imageData.name}" onclick="openImageModal('${imageData.src}')">
+                        <div class="gallery-overlay">
+                            <h4>${imageData.name}</h4>
+                            <p>Gallery image ${index + 1}</p>
+                        </div>
+                    `;
+                    galleryGrid.appendChild(galleryItem);
+                });
+            } else {
+                // Show placeholder if no gallery images
+                for (let i = 1; i <= 4; i++) {
+                    const galleryItem = document.createElement('div');
+                    galleryItem.className = 'gallery-item';
+                    galleryItem.innerHTML = `
+                        <div class="placeholder-image">
+                            <span>No gallery image ${i}</span>
+                        </div>
+                    `;
+                    galleryGrid.appendChild(galleryItem);
+                }
+            }
+        }
+
+        // Handle file upload
+        function handleFileUpload(input, key) {
+            const file = input.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = {
+                        src: e.target.result,
+                        name: file.name,
+                        uploadDate: new Date().toISOString()
+                    };
+                    saveImage(key, imageData);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Handle multiple file upload for gallery
+        function handleGalleryUpload(input) {
+            const files = input.files;
+            let galleryData = loadImage(IMAGE_KEYS.gallery) || [];
+            
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imageData = {
+                            id: Date.now() + Math.random(),
+                            src: e.target.result,
+                            name: file.name,
+                            uploadDate: new Date().toISOString()
+                        };
+                        galleryData.push(imageData);
+                        
+                        // Save after all files are processed
+                        if (galleryData.length === files.length) {
+                            saveImage(IMAGE_KEYS.gallery, galleryData);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Load all images
+        function loadAllImages() {
+            // Load all image types
+            Object.values(IMAGE_KEYS).forEach(key => {
+                const imageData = loadImage(key);
+                if (imageData) {
+                    if (key === IMAGE_KEYS.gallery) {
+                        updateGalleryDisplay(imageData);
+                    } else {
+                        updateImageDisplay(key, imageData);
+                    }
+                }
+            });
+
+            // Update gallery manager
+            updateGalleryManager();
+        }
+
+        // Update gallery manager in admin panel
+        function updateGalleryManager() {
+            const galleryData = loadImage(IMAGE_KEYS.gallery) || [];
+            const galleryManager = document.getElementById('galleryManager');
+            galleryManager.innerHTML = '';
+            
+            if (galleryData.length > 0) {
+                galleryData.forEach((imageData, index) => {
+                    const imageItem = document.createElement('div');
+                    imageItem.className = 'current-image';
+                    imageItem.innerHTML = `
+                        <img src="${imageData.src}" alt="${imageData.name}">
+                        <div class="image-info">${imageData.name}</div>
+                        <div class="image-actions">
+                            <button onclick="deleteGalleryImage(${index})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    galleryManager.appendChild(imageItem);
+                });
+            } else {
+                galleryManager.innerHTML = '<p style="text-align: center; color: var(--text-light);">No gallery images uploaded</p>';
+            }
+        }
+
+        // Delete gallery image
+        function deleteGalleryImage(index) {
+            if (confirm('Are you sure you want to delete this gallery image?')) {
+                let galleryData = loadImage(IMAGE_KEYS.gallery) || [];
+                galleryData.splice(index, 1);
+                saveImage(IMAGE_KEYS.gallery, galleryData);
+                updateGalleryManager();
+            }
+        }
+
+        // Setup file input listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Logo upload
+            document.getElementById('logoInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.logo);
+            });
+
+            // Background upload
+            document.getElementById('backgroundInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.background);
+            });
+
+            // Splash logo upload
+            document.getElementById('splashLogoInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.splashLogo);
+            });
+
+            // Beethoven project upload
+            document.getElementById('beethovenInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.beethoven);
+            });
+
+            // Beethoven detail upload
+            document.getElementById('beethovenDetailInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.beethovenDetail);
+            });
+
+            // Jap-Yeo upload
+            document.getElementById('japYeoInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.japYeo);
+            });
+
+            // Kuei Pin upload
+            document.getElementById('kueiPinInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.kueiPin);
+            });
+
+            // Jap Tji upload
+            document.getElementById('japTjiInput').addEventListener('change', function() {
+                handleFileUpload(this, IMAGE_KEYS.japTji);
+            });
+
+            // Gallery upload
+            document.getElementById('galleryInput').addEventListener('change', function() {
+                handleGalleryUpload(this);
+            });
+
+            // Check admin status and load images
+            checkAdminStatus();
+            loadAllImages();
+        });
+
         // Splash Screen functionality
         const splashScreen = document.getElementById('splashScreen');
         const mainContent = document.getElementById('mainContent');
-        const splashLogo = document.getElementById('splashLogo');
         
         // Function to hide splash screen and show main content
         function showMainContent() {
@@ -2229,7 +3227,7 @@
             mainContent.classList.add('active');
         }
         
-        // Click event on splash logo or entire splash screen
+        // Click event on splash screen
         splashScreen.addEventListener('click', showMainContent);
         
         // Auto transition after 5 seconds
@@ -2623,7 +3621,3 @@
     </script>
 </body>
 </html>
-
-
-
-
