@@ -371,7 +371,7 @@
             align-items: center;
             z-index: 9999;
             transition: opacity 0.8s ease, visibility 0.8s ease;
-            cursor: pointer; /* Added to make it clickable */
+            cursor: pointer;
         }
 
         .splash-content {
@@ -902,7 +902,7 @@
             color: var(--primary);
         }
 
-        /* Gallery Section - UPDATED */
+        /* Gallery Section */
         .gallery-container {
             margin-top: 2rem;
         }
@@ -1562,17 +1562,6 @@
             animation: slideDown 0.3s ease;
         }
 
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         /* Multiple file upload styling */
         .file-list {
             margin-top: 1rem;
@@ -1729,9 +1718,9 @@
                 <div class="image-manager">
                     <div class="current-image">
                         <img id="currentBeethovenDetail" src="" alt="Beethoven Detail" style="display:none;">
-                            <div class="placeholder-image" id="beethovenDetailPlaceholder">
-                                <span>No Beethoven detail image uploaded</span>
-                            </div>
+                        <div class="placeholder-image" id="beethovenDetailPlaceholder">
+                            <span>No Beethoven detail image uploaded</span>
+                        </div>
                         <div class="image-info" id="beethovenDetailInfo" style="display:none;"></div>
                     </div>
                 </div>
@@ -1799,7 +1788,7 @@
                 </div>
             </div>
 
-            <!-- Gallery Management - UPDATED -->
+            <!-- Gallery Management -->
             <div class="admin-section">
                 <h4>Gallery Management</h4>
                 <div class="upload-area" onclick="document.getElementById('galleryInput').click()">
@@ -2034,7 +2023,7 @@
                             </div>
                             <div class="event-card fade-in">
                                 <div class="event-date">March 10-15, 2025</div>
-                                <h3 class="event-title">International Orchestra Competition (IOC)</h3>
+                                <h3 class="event-title">Indonesia Open Competition (IOC)</h3>
                                 <div class="event-location">
                                     <i class="fas fa-map-marker-alt"></i>
                                     <span>Vienna, Austria</span>
@@ -2092,7 +2081,7 @@
                             </div>
                             <div class="event-card fade-in">
                                 <div class="event-date">May 20-25, 2024</div>
-                                <h3 class="event-title">International Orchestra Competition (IOC)</h3>
+                                <h3 class="event-title">Indonesia Open Competition (IOC)</h3>
                                 <div class="event-location">
                                     <i class="fas fa-map-marker-alt"></i>
                                     <span>Prague, Czech Republic</span>
@@ -2261,9 +2250,8 @@
                     <div class="artist-card fade-in">
                         <div class="artist-image">
                             <img id="kueiPinImg" src="" alt="Dr. Kuei Pin Yeo" style="display:none;">
-                                <div class="placeholder-image" id="kueiPinPlaceholder">
-                                    <span>No Dr. Kuei Pin Yeo image uploaded</span>
-                                </div>
+                            <div class="placeholder-image" id="kueiPinPlaceholder">
+                                <span>No Dr. Kuei Pin Yeo image uploaded</span>
                             </div>
                         </div>
                         <div class="artist-info">
@@ -2315,9 +2303,8 @@
                     <div class="artist-card fade-in">
                         <div class="artist-image">
                             <img id="japTjiImg" src="" alt="Jap Tji Kien" style="display:none;">
-                                <div class="placeholder-image" id="japTjiPlaceholder">
-                                    <span>No Jap Tji Kien image uploaded</span>
-                                </div>
+                            <div class="placeholder-image" id="japTjiPlaceholder">
+                                <span>No Jap Tji Kien image uploaded</span>
                             </div>
                         </div>
                         <div class="artist-info">
@@ -2376,9 +2363,8 @@
                 <div class="project-card">
                     <div class="project-image">
                         <img id="beethovenDetailImg" src="" alt="Beethoven Project Detail" style="display:none;">
-                            <div class="placeholder-image" id="beethovenDetailPlaceholder" style="height:300px;">
-                                <span>No Beethoven detail image uploaded</span>
-                            </div>
+                        <div class="placeholder-image" id="beethovenDetailPlaceholder" style="height:300px;">
+                            <span>No Beethoven detail image uploaded</span>
                         </div>
                     </div>
                     <div class="project-content">
@@ -2416,7 +2402,6 @@
                                 </ul>
                             </div>
                             <a href="#contact" class="btn btn-primary" style="margin-top: 1.5rem;">Tanyakan Tentang Proyek Ini</a>
-                        </div>
                         </div>
 
                         <!-- Chinese Content -->
@@ -2732,7 +2717,7 @@
 
     <script>
         // Admin System
-        const ADMIN_PASSWORD = 'ymjadmin2025'; // Change this to your desired password
+        const ADMIN_PASSWORD = 'ymjadmin2025';
         let isLoggedIn = false;
 
         // Image storage keys
@@ -2841,7 +2826,7 @@
             }
         }
 
-        // Update gallery display - UPDATED
+        // Update gallery display
         function updateGalleryDisplay(galleryData) {
             const galleryGrid = document.getElementById('galleryGrid');
             const visibleCount = document.getElementById('visibleCount');
