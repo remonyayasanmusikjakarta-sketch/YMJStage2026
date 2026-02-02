@@ -150,6 +150,24 @@ color: var(--text-dark);
 background: #cbd5e0;
 }
 
+.login-error {
+background: #f8d7da;
+color: #721c24;
+border: 1px solid #f5c6cb;
+padding: 10px;
+border-radius: 5px;
+margin-bottom: 1rem;
+font-size: 0.9rem;
+display: none;
+}
+
+.login-attempts {
+text-align: center;
+margin-top: 1rem;
+font-size: 0.8rem;
+color: var(--text-light);
+}
+
 /* Admin Dashboard Styles */
 .admin-dashboard {
 position: fixed;
@@ -224,6 +242,7 @@ transition: all 0.3s ease;
 cursor: pointer;
 background: var(--bg-light);
 margin-bottom: 1rem;
+position: relative;
 }
 
 .upload-area:hover {
@@ -234,6 +253,11 @@ background: rgba(26, 54, 93, 0.05);
 .upload-area.dragover {
 border-color: var(--secondary);
 background: rgba(212, 175, 55, 0.1);
+}
+
+.upload-area.uploading {
+pointer-events: none;
+opacity: 0.7;
 }
 
 .upload-icon {
@@ -486,6 +510,68 @@ display: flex;
 gap: 0.5rem;
 justify-content: flex-end;
 margin-top: 0.5rem;
+}
+
+/* Info Box for Image Storage */
+.info-box {
+background: #e6f7ff;
+border-left: 4px solid #1890ff;
+padding: 1rem;
+margin-bottom: 1rem;
+border-radius: 0 4px 4px 0;
+}
+
+.info-box p {
+margin: 0;
+font-size: 0.9rem;
+color: var(--text-dark);
+}
+
+/* Upload Progress Bar */
+.upload-progress {
+position: absolute;
+bottom: 0;
+left: 0;
+height: 3px;
+background: var(--primary);
+border-radius: 0 0 8px 8px;
+transition: width 0.3s ease;
+}
+
+/* Firebase Status */
+.firebase-status {
+padding: 10px;
+margin-bottom: 1rem;
+border-radius: 5px;
+text-align: center;
+font-size: 0.9rem;
+}
+
+.firebase-status.connected {
+background: #d4edda;
+color: #155724;
+border: 1px solid #c3e6cb;
+}
+
+.firebase-status.disconnected {
+background: #f8d7da;
+color: #721c24;
+border: 1px solid #f5c6cb;
+}
+
+/* Security Info */
+.security-info {
+background: #fff3cd;
+border-left: 4px solid #ffc107;
+padding: 1rem;
+margin-bottom: 1rem;
+border-radius: 0 4px 4px 0;
+}
+
+.security-info p {
+margin: 0;
+font-size: 0.9rem;
+color: #856404;
 }
 
 /* Splash Screen Styles */
@@ -1485,45 +1571,6 @@ transition: background-color 0.3s ease;
 background-color: rgba(0,0,0,0.05);
 }
 
-/* Guide Grid */
-.guide-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-gap: 2rem;
-margin-top: 2rem;
-}
-
-.guide-card {
-background: white;
-padding: 2rem;
-border-radius: 10px;
-box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.guide-card h4 {
-color: var(--primary);
-margin-bottom: 1rem;
-display: flex;
-align-items: center;
-gap: 10px;
-}
-
-.guide-card ul {
-list-style: none;
-padding: 0;
-}
-
-.guide-card li {
-padding: 5px 0;
-border-bottom: 1px solid var(--border);
-font-family: 'Courier New', monospace;
-font-size: 0.9rem;
-}
-
-.guide-card li:last-child {
-border-bottom: none;
-}
-
 /* Footer */
 footer {
 background: var(--text-dark);
@@ -1798,11 +1845,505 @@ cursor: pointer;
 </style>
 </head>
 <body>
+<!-- Firebase SDK - Load with error handling -->
+<script>
+// Ganti bagian ini di awal JavaScript (sekitelah tag <script> pertama)
+// Hapus atau comment konfigurasi Firebase
+// const firebaseConfig = { ... };
+
+// Tambahkan konfigurasi Cloudinary
+const CLOUDINARY_CONFIG = {
+  cloudName: 'dy8hrbu9c', // GANTI dengan cloud name Anda
+  uploadPreset: 'ymj-stage-upload', // GANTI dengan preset Anda
+  apiKey: '444569244124917' // GANTI dengan API key Anda
+};
+
+// Global variables
+let cloudinaryConnected = false;
+let imageStorage = 'cloudinary'; // 'cloudinary' atau 'localStorage'
+
+// Update fungsi pengecekan koneksi
+function checkStorageConnection() {
+  const statusElement = document.getElementById('firebaseStatus');
+  const storageInfoElement = document.getElementById('storageInfo');
+  
+  if (imageStorage === 'cloudinary' && CLOUDINARY_CONFIG.cloudName && CLOUDINARY_CONFIG.apiKey) {
+    cloudinaryConnected = true;
+    statusElement.textContent = 'Cloudinary Status: Connected';
+    statusElement.className = 'firebase-status connected';
+    storageInfoElement.textContent = 'Images are stored in Cloudinary and visible to all visitors.';
+  } else {
+    cloudinaryConnected = false;
+    statusElement.textContent = 'Using Local Storage (Fallback)';
+    statusElement.className = 'firebase-status disconnected';
+    storageInfoElement.textContent = 'Images are stored in your browser\'s local storage.';
+  }
+}
+
+// Fungsi upload ke Cloudinary
+async function uploadImageToCloudinary(file, progressElementId, statusElementId) {
+  if (!cloudinaryConnected) {
+    throw new Error('Cloudinary not configured');
+  }
+  
+  const progressElement = document.getElementById(progressElementId);
+  const statusElement = document.getElementById(statusElementId);
+  
+  // Show progress
+  if (progressElement) {
+    progressElement.style.display = 'block';
+    progressElement.style.width = '0%';
+  }
+  
+  if (statusElement) {
+    statusElement.textContent = 'Uploading...';
+  }
+  
+  try {
+    // Create form data
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+    formData.append('api_key', CLOUDINARY_CONFIG.apiKey);
+    
+    // Create XMLHttpRequest for progress tracking
+    const xhr = new XMLHttpRequest();
+    
+    // Track upload progress
+    xhr.upload.addEventListener('progress', (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = (event.loaded / event.total) * 100;
+        if (progressElement) {
+          progressElement.style.width = percentComplete + '%';
+        }
+      }
+    });
+    
+    // Handle completion
+    xhr.addEventListener('load', () => {
+      if (xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        
+        if (progressElement) {
+          progressElement.style.width = '100%';
+          setTimeout(() => {
+            progressElement.style.display = 'none';
+            progressElement.style.width = '0%';
+          }, 1000);
+        }
+        
+        if (statusElement) {
+          statusElement.textContent = 'Upload complete!';
+          statusElement.style.color = 'var(--success)';
+        }
+        
+        return {
+          url: response.secure_url,
+          publicId: response.public_id,
+          provider: 'cloudinary'
+        };
+      } else {
+        throw new Error('Upload failed');
+      }
+    });
+    
+    // Handle error
+    xhr.addEventListener('error', () => {
+      if (progressElement) {
+        progressElement.style.display = 'none';
+      }
+      if (statusElement) {
+        statusElement.textContent = 'Upload failed';
+        statusElement.style.color = 'var(--error)';
+      }
+      throw new Error('Network error');
+    });
+    
+    // Send request
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`);
+    xhr.send(formData);
+    
+    // Return promise
+    return new Promise((resolve, reject) => {
+      xhr.addEventListener('load', () => {
+        const response = JSON.parse(xhr.responseText);
+        if (response.error) {
+          reject(new Error(response.error.message));
+        } else {
+          resolve({
+            url: response.secure_url,
+            publicId: response.public_id,
+            provider: 'cloudinary'
+          });
+        }
+      });
+      xhr.addEventListener('error', () => {
+        reject(new Error('Network error'));
+      });
+    });
+    
+  } catch (error) {
+    if (progressElement) {
+      progressElement.style.display = 'none';
+    }
+    if (statusElement) {
+      statusElement.textContent = 'Upload failed';
+      statusElement.style.color = 'var(--error)';
+    }
+    throw error;
+  }
+}
+
+// Fallback ke localStorage
+function saveImageToLocalStorage(key, imageData) {
+  localStorage.setItem(key, JSON.stringify(imageData));
+  updateImageDisplay(key, imageData);
+}
+
+// Update fungsi upload utama
+function handleFileUpload(input, key) {
+  const file = input.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const uploadArea = document.getElementById(key + 'UploadArea');
+    uploadArea.classList.add('uploading');
+    
+    if (cloudinaryConnected) {
+      // Coba upload ke Cloudinary
+      uploadImageToCloudinary(file, key + 'Progress', key + 'Status')
+        .then(imageData => {
+          saveImageToLocalStorage(key, imageData);
+          showNotification('Image uploaded to Cloudinary successfully!');
+          uploadArea.classList.remove('uploading');
+        })
+        .catch(error => {
+          console.error('Cloudinary upload failed:', error);
+          showNotification('Cloudinary upload failed. Using local storage.', 'info');
+          
+          // Fallback ke localStorage
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const imageData = {
+              id: Date.now() + Math.random(),
+              src: e.target.result,
+              name: file.name,
+              uploadDate: new Date().toISOString(),
+              provider: 'localStorage'
+            };
+            saveImageToLocalStorage(key, imageData);
+            uploadArea.classList.remove('uploading');
+            showNotification('Image saved to local storage.');
+          };
+          reader.readAsDataURL(file);
+        });
+    } else {
+      // Langsung ke localStorage
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const imageData = {
+          id: Date.now() + Math.random(),
+          src: e.target.result,
+          name: file.name,
+          uploadDate: new Date().toISOString(),
+          provider: 'localStorage'
+        };
+        saveImageToLocalStorage(key, imageData);
+        uploadArea.classList.remove('uploading');
+        showNotification('Image saved to local storage.');
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+}
+
+// Update fungsi load image
+function loadImage(key) {
+  if (cloudinaryConnected) {
+    // Coba load dari Cloudinary (jika ada URL Cloudinary tersimpan)
+    const savedData = JSON.parse(localStorage.getItem(key) || 'null');
+    if (savedData && savedData.provider === 'cloudinary') {
+      return savedData;
+    }
+  }
+  
+  // Fallback ke localStorage
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : null;
+}
+
+// Update fungsi saveImage
+function saveImage(key, imageData) {
+  if (cloudinaryConnected && imageData.provider === 'cloudinary') {
+    // Sudah di Cloudinary, simpan di localStorage
+    localStorage.setItem(key, JSON.stringify(imageData));
+  } else {
+    // Hanya localStorage
+    localStorage.setItem(key, JSON.stringify(imageData));
+  }
+  updateImageDisplay(key, imageData);
+}
+
+// Update fungsi handleGalleryUpload
+function handleGalleryUpload(input) {
+  const files = input.files;
+  if (files.length === 0) return;
+  
+  let galleryData = JSON.parse(localStorage.getItem('ymjGallery') || '[]');
+  let uploadedCount = 0;
+  
+  // Update status
+  const statusElement = document.getElementById('galleryStatus');
+  if (statusElement) {
+    statusElement.textContent = `Uploading ${files.length} image(s)...`;
+  }
+  
+  Array.from(files).forEach(file => {
+    if (file.type.startsWith('image/')) {
+      if (cloudinaryConnected) {
+        uploadImageToCloudinary(file, 'galleryProgress', 'galleryStatus')
+          .then(imageData => {
+            galleryData.push({
+              id: Date.now() + Math.random(),
+              src: imageData.url,
+              name: file.name,
+              publicId: imageData.publicId,
+              uploadDate: new Date().toISOString(),
+              provider: 'cloudinary'
+            });
+            
+            uploadedCount++;
+            
+            if (uploadedCount === files.length) {
+              localStorage.setItem('ymjGallery', JSON.stringify(galleryData));
+              updateGalleryDisplay(galleryData);
+              showNotification(`${files.length} image(s) uploaded successfully!`);
+              input.value = '';
+              
+              if (statusElement) {
+                statusElement.textContent = 'All images uploaded!';
+                statusElement.style.color = 'var(--success)';
+              }
+            }
+          })
+          .catch(error => {
+            console.error('Cloudinary upload failed:', error);
+            showNotification('Cloudinary upload failed. Using local storage.', 'info');
+            
+            // Fallback ke localStorage
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              const imageData = {
+                id: Date.now() + Math.random(),
+                src: e.target.result,
+                name: file.name,
+                uploadDate: new Date().toISOString(),
+                provider: 'localStorage'
+              };
+              galleryData.push(imageData);
+              uploadedCount++;
+              
+              if (uploadedCount === files.length) {
+                localStorage.setItem('ymjGallery', JSON.stringify(galleryData));
+                updateGalleryDisplay(galleryData);
+                showNotification(`${files.length} image(s) uploaded to local storage!`);
+                input.value = '';
+              }
+            };
+            reader.readAsDataURL(file);
+          });
+      } else {
+        // Langsung ke localStorage
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const imageData = {
+            id: Date.now() + Math.random(),
+            src: e.target.result,
+            name: file.name,
+            uploadDate: new Date().toISOString(),
+            provider: 'localStorage'
+          };
+          galleryData.push(imageData);
+          uploadedCount++;
+          
+          if (uploadedCount === files.length) {
+            localStorage.setItem('ymjGallery', JSON.stringify(galleryData));
+            updateGalleryDisplay(galleryData);
+            showNotification(`${files.length} image(s) uploaded!`);
+            input.value = '';
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  });
+}
+
+// Update fungsi loadGalleryImages
+function loadGalleryImages() {
+  if (cloudinaryConnected) {
+    // Coba load dari Cloudinary URLs yang tersimpan
+    const galleryData = JSON.parse(localStorage.getItem('ymjGallery') || '[]');
+    updateGalleryDisplay(galleryData);
+  } else {
+    // Load dari localStorage
+    const galleryData = JSON.parse(localStorage.getItem('ymjGallery') || '[]');
+    updateGalleryDisplay(galleryData);
+  }
+}
+
+// Update fungsi deleteGalleryImage
+function deleteGalleryImage(index) {
+  if (confirm('Are you sure you want to delete this gallery image?')) {
+    let galleryData = JSON.parse(localStorage.getItem('ymjGallery') || '[]');
+    const deletedImage = galleryData[index];
+    
+    // Jika gambar dari Cloudinary, hapus dari Cloudinary
+    if (deletedImage && deletedImage.provider === 'cloudinary') {
+      console.log('Cloudinary image would be deleted here in production');
+      // Di production, Anda bisa hapus menggunakan Cloudinary API
+      // deleteImageFromCloudinary(deletedImage.publicId);
+    }
+    
+    galleryData.splice(index, 1);
+    localStorage.setItem('ymjGallery', JSON.stringify(galleryData));
+    updateGalleryDisplay(galleryData);
+    showNotification('Image deleted successfully!');
+  }
+}
+
+// Tambahkan fungsi untuk menghapus dari Cloudinary (opsional)
+async function deleteImageFromCloudinary(publicId) {
+  try {
+    const formData = new FormData();
+    formData.append('public_id', publicId);
+    formData.append('api_key', CLOUDINARY_CONFIG.api_key);
+    
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/destroy`,
+      {
+        method: 'POST',
+        body: formData
+      }
+    );
+    
+    const result = await response.json();
+    return result.result;
+  } catch (error) {
+    console.error('Failed to delete from Cloudinary:', error);
+  }
+}
+
+// Update fungsi checkAdminStatus
+function checkAdminStatus() {
+  const adminStatus = localStorage.getItem('ymjAdminLoggedIn');
+  if (adminStatus === 'true') {
+    isLoggedIn = true;
+    document.getElementById('adminToggle').classList.add('logged-in');
+  }
+  
+  // Check if locked
+  const lockedUntil = localStorage.getItem('ymjLockedUntil');
+  if (lockedUntil) {
+    const now = Date.now();
+    const lockTimestamp = parseInt(lockedUntil);
+    if (now < lockTimestamp) {
+      isLocked = true;
+      lockTime = lockTimestamp;
+      updateLoginAttempts();
+    } else {
+      localStorage.removeItem('ymjLockedUntil');
+    }
+  }
+}
+
+// Update fungsi toggleAdminDashboard
+function toggleAdminDashboard() {
+  const dashboard = document.getElementById('adminDashboard');
+  dashboard.classList.toggle('active');
+
+  if (dashboard.classList.contains('active')) {
+    loadAllImages();
+    loadAllContent();
+    loadEvents();
+    checkStorageConnection();
+  }
+}
+
+// Update fungsi loadAllImages
+function loadAllImages() {
+  // Load all image types
+  Object.values(IMAGE_KEYS).forEach(key => {
+    const imageData = loadImage(key);
+    if (imageData) {
+      updateImageDisplay(key, imageData);
+    }
+  });
+  
+  // Load gallery images
+  loadGalleryImages();
+}
+
+// Tambahkan di akhir DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  // Check admin status and load images
+  checkAdminStatus();
+  loadAllImages();
+  loadEvents();
+  switchLanguage('en');
+  
+  // Setup file inputs
+  document.getElementById('logoInput').addEventListener('change', function() {
+    handleFileUpload(this, 'ymjLogo');
+  });
+
+  document.getElementById('backgroundInput').addEventListener('change', function() {
+    handleFileUpload(this, 'ymjBackground');
+  });
+
+  document.getElementById('splashLogoInput').addEventListener('change', function() {
+    handleFileUpload(this, 'ymjSplashLogo');
+  });
+
+  document.getElementById('beethovenInput').addEventListener('change', function() {
+    handleFileUpload(this, 'ymjBeethoven');
+  });
+
+  document.getElementById('beethovenDetailInput').addEventListener('change', function() {
+    handleFileUpload(this, 'ymjBeethovenDetail');
+  });
+
+  document.getElementById('japYeoInput').addEventListener('change', function() {
+    handleFileUpload(this, 'ymjJapYeo');
+  });
+
+  document.getElementById('kueiPinInput').addEventListener('change', function() {
+    handleFileUpload(this, 'ymjKueiPin');
+  });
+
+  document.getElementById('japTjiInput').addEventListener('change', function() {
+    handleFileUpload(this, 'ymjJapTji');
+  });
+
+  // Gallery upload
+  document.getElementById('galleryInput').addEventListener('change', function() {
+    handleGalleryUpload(this);
+  });
+});
+</script>
+
 <!-- Admin Login Modal -->
 <div class="admin-login" id="adminLogin">
 <div class="login-form">
 <h2>Admin Login</h2>
+<div class="login-error" id="loginError"></div>
 <form id="loginForm">
+<div class="form-group">
+<label for="adminUsername">Username</label>
+<input type="text" id="adminUsername" placeholder="Enter admin username" required>
+</div>
 <div class="form-group">
 <label for="adminPassword">Password</label>
 <input type="password" id="adminPassword" placeholder="Enter admin password" required>
@@ -1811,6 +2352,7 @@ cursor: pointer;
 <button type="submit" class="btn-login">Login</button>
 <button type="button" class="btn-cancel" onclick="closeAdminLogin()">Cancel</button>
 </div>
+<div class="login-attempts" id="loginAttempts">Attempts remaining: 3</div>
 </form>
 </div>
 </div>
@@ -1824,14 +2366,30 @@ cursor: pointer;
 </button>
 </div>
 <div class="admin-content">
+<!-- Security Info -->
+<div class="security-info">
+<p><strong>Security Notice:</strong> This admin panel is protected. Only authorized users can make changes to this website.</p>
+</div>
+
+<!-- Firebase Status -->
+<div id="firebaseStatus" class="firebase-status disconnected">
+Firebase Status: Not Connected
+</div>
+
+<!-- Info Box -->
+<div class="info-box">
+<p><strong>Important:</strong> <span id="storageInfo">Images are stored in your browser's local storage. They will only be visible to you on this device and browser.</span></p>
+</div>
+
 <!-- Logo Management -->
 <div class="admin-section">
 <h4>Logo Management</h4>
-<div class="upload-area" onclick="document.getElementById('logoInput').click()">
+<div class="upload-area" id="logoUploadArea" onclick="document.getElementById('logoInput').click()">
 <i class="fas fa-upload upload-icon"></i>
 <p class="upload-text">Upload Logo</p>
 <p class="upload-hint">PNG, JPG up to 5MB</p>
 <input type="file" id="logoInput" class="file-input" accept="image/*">
+<div class="upload-progress" id="logoProgress" style="width: 0%; display: none;"></div>
 </div>
 <div class="image-manager">
 <div class="current-image">
@@ -1847,11 +2405,12 @@ cursor: pointer;
 <!-- Background Management -->
 <div class="admin-section">
 <h4>Background Management</h4>
-<div class="upload-area" onclick="document.getElementById('backgroundInput').click()">
+<div class="upload-area" id="backgroundUploadArea" onclick="document.getElementById('backgroundInput').click()">
 <i class="fas fa-image upload-icon"></i>
 <p class="upload-text">Upload Background</p>
 <p class="upload-hint">PNG, JPG up to 5MB</p>
 <input type="file" id="backgroundInput" class="file-input" accept="image/*">
+<div class="upload-progress" id="backgroundProgress" style="width: 0%; display: none;"></div>
 </div>
 <div class="image-manager">
 <div class="current-image">
@@ -1867,11 +2426,12 @@ cursor: pointer;
 <!-- Splash Logo Management -->
 <div class="admin-section">
 <h4>Splash Logo Management</h4>
-<div class="upload-area" onclick="document.getElementById('splashLogoInput').click()">
+<div class="upload-area" id="splashLogoUploadArea" onclick="document.getElementById('splashLogoInput').click()">
 <i class="fas fa-star upload-icon"></i>
 <p class="upload-text">Upload Splash Logo</p>
 <p class="upload-hint">PNG, JPG up to 5MB</p>
 <input type="file" id="splashLogoInput" class="file-input" accept="image/*">
+<div class="upload-progress" id="splashLogoProgress" style="width: 0%; display: none;"></div>
 </div>
 <div class="image-manager">
 <div class="current-image">
@@ -1942,11 +2502,12 @@ cursor: pointer;
 <!-- Project Images -->
 <div class="admin-section">
 <h4>Beethoven Project Images</h4>
-<div class="upload-area" onclick="document.getElementById('beethovenInput').click()">
+<div class="upload-area" id="beethovenUploadArea" onclick="document.getElementById('beethovenInput').click()">
 <i class="fas fa-music upload-icon"></i>
 <p class="upload-text">Upload Beethoven Project Image</p>
 <p class="upload-hint">PNG, JPG up to 5MB</p>
 <input type="file" id="beethovenInput" class="file-input" accept="image/*">
+<div class="upload-progress" id="beethovenProgress" style="width: 0%; display: none;"></div>
 </div>
 <div class="image-manager">
 <div class="current-image">
@@ -1958,11 +2519,12 @@ cursor: pointer;
 </div>
 </div>
 
-<div class="upload-area" onclick="document.getElementById('beethovenDetailInput').click()">
+<div class="upload-area" id="beethovenDetailUploadArea" onclick="document.getElementById('beethovenDetailInput').click()">
 <i class="fas fa-music upload-icon"></i>
 <p class="upload-text">Upload Beethoven Detail Image</p>
 <p class="upload-hint">PNG, JPG up to 5MB</p>
 <input type="file" id="beethovenDetailInput" class="file-input" accept="image/*">
+<div class="upload-progress" id="beethovenDetailProgress" style="width: 0%; display: none;"></div>
 </div>
 <div class="image-manager">
 <div class="current-image">
@@ -1982,10 +2544,11 @@ cursor: pointer;
 <!-- Jap-Yeo Duo -->
 <div style="margin-bottom: 1rem;">
 <h5 style="margin-bottom: 0.5rem; color: var(--text-dark);">Jap-Yeo Duo</h5>
-<div class="upload-area" onclick="document.getElementById('japYeoInput').click()">
+<div class="upload-area" id="japYeoUploadArea" onclick="document.getElementById('japYeoInput').click()">
 <i class="fas fa-users upload-icon"></i>
 <p class="upload-text">Upload Jap-Yeo Duo Image</p>
 <input type="file" id="japYeoInput" class="file-input" accept="image/*">
+<div class="upload-progress" id="japYeoProgress" style="width: 0%; display: none;"></div>
 </div>
 <div class="image-manager">
 <div class="current-image">
@@ -2001,10 +2564,11 @@ cursor: pointer;
 <!-- Dr. Kuei Pin Yeo -->
 <div style="margin-bottom: 1rem;">
 <h5 style="margin-bottom: 0.5rem; color: var(--text-dark);">Dr. Kuei Pin Yeo</h5>
-<div class="upload-area" onclick="document.getElementById('kueiPinInput').click()">
+<div class="upload-area" id="kueiPinUploadArea" onclick="document.getElementById('kueiPinInput').click()">
 <i class="fas fa-user upload-icon"></i>
 <p class="upload-text">Upload Dr. Kuei Pin Yeo Image</p>
 <input type="file" id="kueiPinInput" class="file-input" accept="image/*">
+<div class="upload-progress" id="kueiPinProgress" style="width: 0%; display: none;"></div>
 </div>
 <div class="image-manager">
 <div class="current-image">
@@ -2020,10 +2584,11 @@ cursor: pointer;
 <!-- Jap Tji Kien -->
 <div style="margin-bottom: 1rem;">
 <h5 style="margin-bottom: 0.5rem; color: var(--text-dark);">Jap Tji Kien</h5>
-<div class="upload-area" onclick="document.getElementById('japTjiInput').click()">
+<div class="upload-area" id="japTjiUploadArea" onclick="document.getElementById('japTjiInput').click()">
 <i class="fas fa-user upload-icon"></i>
 <p class="upload-text">Upload Jap Tji Kien Image</p>
 <input type="file" id="japTjiInput" class="file-input" accept="image/*">
+<div class="upload-progress" id="japTjiProgress" style="width: 0%; display: none;"></div>
 </div>
 <div class="image-manager">
 <div class="current-image">
@@ -2040,11 +2605,12 @@ cursor: pointer;
 <!-- Gallery Management -->
 <div class="admin-section">
 <h4>Gallery Management</h4>
-<div class="upload-area" onclick="document.getElementById('galleryInput').click()">
+<div class="upload-area" id="galleryUploadArea" onclick="document.getElementById('galleryInput').click()">
 <i class="fas fa-images upload-icon"></i>
 <p class="upload-text">Upload Gallery Images</p>
 <p class="upload-hint">Select multiple images (PNG, JPG up to 5MB each)</p>
 <input type="file" id="galleryInput" class="file-input" accept="image/*" multiple>
+<div class="upload-progress" id="galleryProgress" style="width: 0%; display: none;"></div>
 </div>
 
 <div class="gallery-info" style="margin-top: 1rem; padding: 1rem; background: var(--bg-light); border-radius: 8px;">
@@ -2426,7 +2992,6 @@ Salah satu violinis dan dirigen paling dihormati di Indonesia, lahir di Bandung,
 </div>
 </div>
 </div>
-</div>
 </section>
 
 <!-- Beethoven Project Section -->
@@ -2736,7 +3301,6 @@ Dalam rangka memperingati 200 tahun wafatnya Ludwig van Beethoven, YMJ STAGE men
 </div>
 </div>
 </div>
-</div>
 </section>
 
 <!-- Footer -->
@@ -2808,11 +3372,19 @@ Dalam rangka memperingati 200 tahun wafatnya Ludwig van Beethoven, YMJ STAGE men
 </div>
 
 <script>
-// Admin System
-const ADMIN_PASSWORD = 'ymjadmin2025';
-let isLoggedIn = false;
+// Admin System - Enhanced Security
+const ADMIN_CREDENTIALS = {
+  username: 'ymjadmin',
+  password: 'Beethoven2027!'
+};
 
-// Image storage keys
+let isLoggedIn = false;
+let loginAttempts = 0;
+const MAX_LOGIN_ATTEMPTS = 3;
+let isLocked = false;
+let lockTime = 0;
+
+// Image storage keys - using localStorage for now
 const IMAGE_KEYS = {
 logo: 'ymjLogo',
 background: 'ymjBackground',
@@ -2844,7 +3416,7 @@ date: 'February 8-12, 2024',
 title: 'Beyond the Notes',
 location: 'Jakarta, Indonesia',
 description: 'YMJ\'s 40th anniversary celebration at JIExpo featuring innovative performances.',
-detail: 'Beyond the Notes was a special event celebrating the 40th anniversary of Yayasan Musik Jakarta. Held at the prestigious JIExpo, this event featured innovative performances that pushed the boundaries of classical music, combining traditional elements with contemporary interpretations. The event brought together renowned artists from Indonesia and abroad, creating a unique cultural exchange that highlighted YMJ\'s four decades of contribution to the classical music scene in Indonesia.'
+detail: 'Beyond the Notes was a special event celebrating the 40th anniversary of Yayasan Musik Jakarta. Held at the prestigious JIExpo, this event featured innovative performances that pushed the boundaries of classical music, combining traditional elements with contemporary interpretations.'
 },
 {
 id: 'evt202402',
@@ -2852,7 +3424,7 @@ date: 'May 20-25, 2024',
 title: 'Indonesia Open Competition (IOC)',
 location: 'Hong Kong',
 description: 'Annual competition showcasing Indonesia\'s finest musical talents on the international stage.',
-detail: 'The Indonesia Open Competition (IOC) is an annual event that showcases Indonesia\'s finest musical talents on the international stage. This year, the competition was held in Hong Kong, bringing together young musicians from across Indonesia to compete and collaborate with their international peers. The competition not only serves as a platform for artistic excellence but also as a cultural bridge, fostering understanding and appreciation of Indonesian musical heritage.'
+detail: 'The Indonesia Open Competition (IOC) is an annual event that showcases Indonesia\'s finest musical talents on the international stage. This year, the competition was held in Hong Kong, bringing together young musicians from across Indonesia.'
 },
 {
 id: 'evt202403',
@@ -2860,7 +3432,7 @@ date: 'August 3-8, 2024',
 title: 'Music Educators Conference',
 location: 'Singapore',
 description: 'A conference bringing together music educators from across Southeast Asia.',
-detail: 'The Music Educators Conference is an annual gathering that brings together music educators from across Southeast Asia to share knowledge, best practices, and innovative teaching methods. This year\'s conference in Singapore focused on integrating technology with traditional music education, preserving cultural heritage while embracing modern pedagogical approaches. Participants attended workshops, lectures, and collaborative sessions designed to enhance their teaching skills and broaden their perspectives.'
+detail: 'The Music Educators Conference is an annual gathering that brings together music educators from across Southeast Asia to share knowledge, best practices, and innovative teaching methods.'
 }
 ],
 2025: [
@@ -2870,7 +3442,7 @@ date: 'January 15-20, 2025',
 title: 'New York Audition Franz Liszt Piano Competition',
 location: 'New York, USA',
 description: 'International piano competition featuring talented young pianists from around the world.',
-detail: 'The New York Audition Franz Liszt Piano Competition is a prestigious international event that brings together talented young pianists from around the world to showcase their interpretation of Liszt\'s works. Held in the cultural heart of New York City, this competition offers participants the opportunity to perform before renowned judges and potentially launch their international careers. Beyond the competition itself, the event includes masterclasses, lectures, and recitals that celebrate the enduring legacy of Franz Liszt.'
+detail: 'The New York Audition Franz Liszt Piano Competition is a prestigious international event that brings together talented young pianists from around the world to showcase their interpretation of Liszt\'s works.'
 },
 {
 id: 'evt202502',
@@ -2878,7 +3450,7 @@ date: 'March 10-15, 2025',
 title: 'Indonesia Open Competition (IOC)',
 location: 'Hong Kong',
 description: 'Annual competition showcasing Indonesia\'s finest musical talents on the international stage.',
-detail: 'The Indonesia Open Competition (IOC) continues its tradition of showcasing Indonesia\'s finest musical talents on the international stage. For the second consecutive year, the competition will be held in Hong Kong, providing Indonesian musicians with valuable international exposure. The competition has grown in prestige and scope, attracting participants from across the Indonesian archipelago and offering them the opportunity to compete in various categories, from solo performance to ensemble work.'
+detail: 'The Indonesia Open Competition (IOC) continues its tradition of showcasing Indonesia\'s finest musical talents on the international stage.'
 },
 {
 id: 'evt202503',
@@ -2886,7 +3458,7 @@ date: 'June 5-10, 2025',
 title: 'Asian Young Artists Showcase',
 location: 'Tokyo, Japan',
 description: 'A showcase featuring the most promising young classical musicians from across Asia.',
-detail: 'The Asian Young Artists Showcase is an annual event that highlights the most promising young classical musicians from across Asia. This year\'s showcase in Tokyo will feature performances, masterclasses, and networking opportunities designed to foster collaboration and cultural exchange among the next generation of Asian classical musicians. The event aims to create a platform for young artists to gain international recognition and to build lasting professional relationships.'
+detail: 'The Asian Young Artists Showcase is an annual event that highlights the most promising young classical musicians from across Asia.'
 }
 ],
 2026: [
@@ -2896,7 +3468,7 @@ date: 'September 12-18, 2026',
 title: 'Beethoven Bicentennial Memorial Concert Series',
 location: 'Multiple Venues',
 description: 'A global performance cycle commemorating the 200th anniversary of Beethoven\'s death.',
-detail: 'The Beethoven Bicentennial Memorial Concert Series is a global performance cycle commemorating the 200th anniversary of the death of Ludwig van Beethoven. This ambitious project will present the complete violin and piano repertoire through carefully curated concert programs held at prestigious venues around the world. Each concert will feature renowned musicians who will offer their unique interpretations of Beethoven\'s works, celebrating his enduring legacy and the timeless beauty of his compositions.'
+detail: 'The Beethoven Bicentennial Memorial Concert Series is a global performance cycle commemorating the 200th anniversary of the death of Ludwig van Beethoven.'
 },
 {
 id: 'evt202602',
@@ -2904,7 +3476,7 @@ date: 'TBD',
 title: 'International Artist Exchange Program',
 location: 'Indonesia & Europe',
 description: 'A cultural exchange program connecting Indonesian musicians with international artists.',
-detail: 'The International Artist Exchange Program is a cultural initiative designed to connect Indonesian musicians with international artists for collaborative performances and workshops. This program will facilitate residencies, joint performances, and educational activities in both Indonesia and various European countries. By fostering these cross-cultural collaborations, the program aims to enrich the artistic practices of all participants and create new pathways for cultural dialogue and understanding.'
+detail: 'The International Artist Exchange Program is a cultural initiative designed to connect Indonesian musicians with international artists for collaborative performances and workshops.'
 },
 {
 id: 'evt202603',
@@ -2912,7 +3484,7 @@ date: 'TBD',
 title: 'Southeast Asian Classical Music Festival',
 location: 'Jakarta, Indonesia',
 description: 'A festival showcasing the finest classical musicians from across Southeast Asia.',
-detail: 'The Southeast Asian Classical Music Festival will bring together the finest classical musicians from across Southeast Asia for a week of performances, masterclasses, and collaborative events. Hosted in Jakarta, this festival aims to celebrate the rich classical music traditions of the region while also exploring new directions and innovations in the field. The festival will include both performances by established artists and showcases for emerging talent, creating a comprehensive panorama of Southeast Asian classical music.'
+detail: 'The Southeast Asian Classical Music Festival will bring together the finest classical musicians from across Southeast Asia for a week of performances, masterclasses, and collaborative events.'
 }
 ]
 };
@@ -2920,10 +3492,37 @@ detail: 'The Southeast Asian Classical Music Festival will bring together the fi
 // Check if already logged in
 function checkAdminStatus() {
 const adminStatus = localStorage.getItem('ymjAdminLoggedIn');
-if (adminStatus === 'true') {
-isLoggedIn = true;
-document.getElementById('adminToggle').classList.add('logged-in');
+const loginTime = localStorage.getItem('ymjLoginTime');
+  
+if (adminStatus === 'true' && loginTime) {
+  // Check if session is still valid (24 hours)
+  const now = Date.now();
+  const loginTimestamp = parseInt(loginTime);
+  const hoursSinceLogin = (now - loginTimestamp) / (1000 * 60 * 60);
+    
+  if (hoursSinceLogin < 24) {
+    isLoggedIn = true;
+    document.getElementById('adminToggle').classList.add('logged-in');
+  } else {
+    // Session expired, clear login
+    localStorage.removeItem('ymjAdminLoggedIn');
+    localStorage.removeItem('ymjLoginTime');
+  }
 }
+  
+  // Check if locked
+  const lockedUntil = localStorage.getItem('ymjLockedUntil');
+  if (lockedUntil) {
+    const now = Date.now();
+    const lockTimestamp = parseInt(lockedUntil);
+    if (now < lockTimestamp) {
+      isLocked = true;
+      lockTime = lockTimestamp;
+      updateLoginAttempts();
+    } else {
+      localStorage.removeItem('ymjLockedUntil');
+    }
+  }
 }
 
 // Handle admin click
@@ -2931,6 +3530,11 @@ function handleAdminClick() {
 if (isLoggedIn) {
 toggleAdminDashboard();
 } else {
+if (isLocked) {
+  const remainingTime = Math.ceil((lockTime - Date.now()) / (1000 * 60));
+  alert(`Account locked. Please try again in ${remainingTime} minutes.`);
+  return;
+}
 showAdminLogin();
 }
 }
@@ -2938,11 +3542,29 @@ showAdminLogin();
 // Show admin login modal
 function showAdminLogin() {
 document.getElementById('adminLogin').classList.add('active');
+updateLoginAttempts();
 }
 
 // Close admin login modal
 function closeAdminLogin() {
 document.getElementById('adminLogin').classList.remove('active');
+document.getElementById('loginError').style.display = 'none';
+document.getElementById('adminUsername').value = '';
+document.getElementById('adminPassword').value = '';
+}
+
+// Update login attempts display
+function updateLoginAttempts() {
+const attemptsElement = document.getElementById('loginAttempts');
+if (isLocked) {
+  const remainingTime = Math.ceil((lockTime - Date.now()) / (1000 * 60));
+  attemptsElement.textContent = `Account locked. Try again in ${remainingTime} minutes`;
+  attemptsElement.style.color = 'var(--error)';
+} else {
+  const remaining = MAX_LOGIN_ATTEMPTS - loginAttempts;
+  attemptsElement.textContent = `Attempts remaining: ${remaining}`;
+  attemptsElement.style.color = 'var(--text-light)';
+}
 }
 
 // Toggle admin dashboard
@@ -2953,7 +3575,26 @@ dashboard.classList.toggle('active');
 if (dashboard.classList.contains('active')) {
 loadAllImages();
 loadAllContent();
+// Make sure events are loaded when dashboard opens
 loadEvents();
+// Update Firebase status
+updateFirebaseStatus();
+}
+}
+
+// Update Firebase status
+function updateFirebaseStatus() {
+const statusElement = document.getElementById('firebaseStatus');
+const storageInfoElement = document.getElementById('storageInfo');
+  
+if (firebaseConnected) {
+statusElement.textContent = 'Firebase Status: Connected';
+statusElement.className = 'firebase-status connected';
+storageInfoElement.textContent = 'Images are stored in Firebase Storage and will be visible to all visitors.';
+} else {
+statusElement.textContent = 'Firebase Status: Not Connected - Using Local Storage';
+statusElement.className = 'firebase-status disconnected';
+storageInfoElement.textContent = 'Images are stored in your browser\'s local storage. They will only be visible to you on this device and browser.';
 }
 }
 
@@ -2961,18 +3602,73 @@ loadEvents();
 function adminLogout() {
 isLoggedIn = false;
 localStorage.setItem('ymjAdminLoggedIn', 'false');
+localStorage.removeItem('ymjLoginTime');
 document.getElementById('adminDashboard').classList.remove('active');
 document.getElementById('adminToggle').classList.remove('logged-in');
+showNotification('Logged out successfully');
 }
 
-// Save image to localStorage
+// Save image to localStorage or Firebase
 function saveImage(key, imageData) {
+if (firebaseConnected && storage) {
+// Try to save to Firebase
+try {
+const fileName = `${key}/${Date.now()}_${imageData.name}`;
+const storageRef = storage.ref(fileName);
+    
+storageRef.putString(imageData.src, 'data_url').then((snapshot) => {
+snapshot.ref.getDownloadURL().then((downloadURL) => {
+// Save URL to Firestore if available
+if (db) {
+db.collection('images').doc(key.replace(/\//g, '_')).set({
+path: key,
+url: downloadURL,
+updatedAt: new Date()
+});
+}
+// Update localStorage as backup
+localStorage.setItem(key, JSON.stringify({...imageData, src: downloadURL}));
+updateImageDisplay(key, {...imageData, src: downloadURL});
+});
+});
+} catch (error) {
+console.error('Firebase save error, using localStorage:', error);
 localStorage.setItem(key, JSON.stringify(imageData));
 updateImageDisplay(key, imageData);
 }
+} else {
+// Use localStorage
+localStorage.setItem(key, JSON.stringify(imageData));
+updateImageDisplay(key, imageData);
+}
+}
 
-// Load image from localStorage
+// Load image from localStorage or Firebase
 function loadImage(key) {
+if (firebaseConnected && db) {
+// Try to load from Firebase
+try {
+db.collection('images').doc(key.replace(/\//g, '_')).get().then((doc) => {
+if (doc.exists) {
+return doc.data().url;
+} else {
+// Fallback to localStorage
+return loadFromLocalStorage(key);
+}
+}).catch((error) => {
+console.error('Firebase load error, using localStorage:', error);
+return loadFromLocalStorage(key);
+});
+} catch (error) {
+return loadFromLocalStorage(key);
+}
+} else {
+// Use localStorage
+return loadFromLocalStorage(key);
+}
+}
+
+function loadFromLocalStorage(key) {
 const data = localStorage.getItem(key);
 return data ? JSON.parse(data) : null;
 }
@@ -3241,7 +3937,6 @@ events[year].push(newEvent);
 
 // Sort events by date
 events[year].sort((a, b) => {
-// Simple date comparison - for a real app, you'd want more sophisticated date parsing
 return a.date.localeCompare(b.date);
 });
 
@@ -3364,19 +4059,81 @@ function closeEventDetailModal() {
 document.getElementById('eventDetailModal').style.display = 'none';
 }
 
+// Handle file upload
+function handleFileUpload(input, key) {
+const file = input.files[0];
+if (file && file.type.startsWith('image/')) {
+const reader = new FileReader();
+reader.onload = function(e) {
+const imageData = {
+id: Date.now() + Math.random(),
+src: e.target.result,
+name: file.name,
+uploadDate: new Date().toISOString()
+};
+
+// Save image
+saveImage(key, imageData);
+showNotification('Image uploaded successfully!');
+};
+reader.readAsDataURL(file);
+}
+}
+
+// Handle gallery upload (multiple files)
+function handleGalleryUpload(input) {
+const files = input.files;
+  
+if (files.length === 0) return;
+  
+let galleryData = JSON.parse(localStorage.getItem(IMAGE_KEYS.gallery) || '[]');
+let processedCount = 0;
+  
+// Process each file
+Array.from(files).forEach(file => {
+if (file.type.startsWith('image/')) {
+const reader = new FileReader();
+reader.onload = function(e) {
+const imageData = {
+id: Date.now() + Math.random(),
+src: e.target.result,
+name: file.name,
+uploadDate: new Date().toISOString()
+};
+
+galleryData.push(imageData);
+processedCount++;
+
+// Save after all files are processed
+if (processedCount === files.length) {
+localStorage.setItem(IMAGE_KEYS.gallery, JSON.stringify(galleryData));
+updateGalleryDisplay(galleryData);
+
+// Show success message
+showNotification(`${files.length} image(s) uploaded successfully!`);
+
+// Reset form
+input.value = '';
+}
+};
+reader.readAsDataURL(file);
+}
+});
+}
+
 // Update gallery display
 function updateGalleryDisplay(galleryData) {
 const galleryGrid = document.getElementById('galleryGrid');
 const visibleCount = document.getElementById('visibleCount');
 const totalCount = document.getElementById('totalCount');
-
+  
 // Clear existing gallery items
 galleryGrid.innerHTML = '';
-
+  
 if (galleryData && galleryData.length > 0) {
 // Show first 10 images in main gallery
 const displayCount = Math.min(10, galleryData.length);
-
+    
 for (let i = 0; i < displayCount; i++) {
 const imageData = galleryData[i];
 const galleryItem = document.createElement('div');
@@ -3390,7 +4147,7 @@ galleryItem.innerHTML = `
 `;
 galleryGrid.appendChild(galleryItem);
 }
-
+    
 // Update counts
 visibleCount.textContent = displayCount;
 totalCount.textContent = galleryData.length;
@@ -3406,70 +4163,28 @@ galleryItem.innerHTML = `
 `;
 galleryGrid.appendChild(galleryItem);
 }
-
+    
 // Update counts
 visibleCount.textContent = '0';
 totalCount.textContent = '0';
 }
-
+  
 // Update gallery manager
-updateGalleryManager();
-}
-
-// Open full gallery modal
-function openFullGallery() {
-const modal = document.getElementById('full-gallery-modal');
-const fullGalleryGrid = document.getElementById('full-gallery-grid');
-const galleryData = loadImage(IMAGE_KEYS.gallery) || [];
-
-// Clear existing content
-fullGalleryGrid.innerHTML = '';
-
-// Add all gallery images to full gallery
-galleryData.forEach((imageData, index) => {
-const galleryItem = document.createElement('div');
-galleryItem.className = 'full-gallery-item';
-galleryItem.innerHTML = `
-<img src="${imageData.src}" alt="${imageData.name}" onclick="openImageModal('${imageData.src}')">
-<div class="full-gallery-overlay">
-<p>${imageData.name}</p>
-</div>
-`;
-fullGalleryGrid.appendChild(galleryItem);
-});
-
-modal.style.display = 'block';
-}
-
-// Close full gallery modal
-function closeFullGallery() {
-document.getElementById('full-gallery-modal').style.display = 'none';
-}
-
-// Delete gallery image
-function deleteGalleryImage(index) {
-if (confirm('Are you sure you want to delete this gallery image?')) {
-let galleryData = loadImage(IMAGE_KEYS.gallery) || [];
-galleryData.splice(index, 1);
-saveImage(IMAGE_KEYS.gallery, galleryData);
-updateGalleryDisplay(galleryData);
-updateGalleryManager();
-}
+updateGalleryManager(galleryData);
 }
 
 // Update gallery manager
-function updateGalleryManager() {
+function updateGalleryManager(galleryData) {
 const galleryManager = document.getElementById('galleryManager');
 const totalGalleryCount = document.getElementById('totalGalleryCount');
-const galleryData = loadImage(IMAGE_KEYS.gallery) || [];
-
+  
 // Update total count
-totalGalleryCount.textContent = galleryData.length;
-
+totalGalleryCount.textContent = galleryData ? galleryData.length : 0;
+  
 // Clear existing content
 galleryManager.innerHTML = '';
-
-if (galleryData.length > 0) {
+  
+if (galleryData && galleryData.length > 0) {
 // Display gallery images with delete buttons
 galleryData.forEach((imageData, index) => {
 const imageItem = document.createElement('div');
@@ -3490,128 +4205,42 @@ galleryManager.innerHTML = '<p style="text-align: center; color: var(--text-ligh
 }
 }
 
-// Handle file upload for gallery (multiple files)
-function handleGalleryUpload(input) {
-const files = input.files;
-
-if (files.length === 0) return;
-
-let galleryData = loadImage(IMAGE_KEYS.gallery) || [];
-let processedCount = 0;
-
-// Process each file
-Array.from(files).forEach(file => {
-if (file.type.startsWith('image/')) {
-const reader = new FileReader();
-reader.onload = function(e) {
-const imageData = {
-id: Date.now() + Math.random(),
-src: e.target.result,
-name: file.name,
-uploadDate: new Date().toISOString()
-};
-
-galleryData.push(imageData);
-processedCount++;
-
-// Save after all files are processed
-if (processedCount === files.length) {
-saveImage(IMAGE_KEYS.gallery, galleryData);
+// Delete gallery image
+function deleteGalleryImage(index) {
+if (confirm('Are you sure you want to delete this gallery image?')) {
+let galleryData = JSON.parse(localStorage.getItem(IMAGE_KEYS.gallery) || '[]');
+galleryData.splice(index, 1);
+localStorage.setItem(IMAGE_KEYS.gallery, JSON.stringify(galleryData));
 updateGalleryDisplay(galleryData);
-
-// Show success message
-showNotification(`${files.length} image(s) uploaded successfully!`);
-
-// Reset form
-input.value = '';
+showNotification('Image deleted successfully!');
 }
-};
-reader.readAsDataURL(file);
-}
-});
 }
 
 // Show notification
-function showNotification(message) {
+function showNotification(message, type = 'success') {
 const notification = document.createElement('div');
-notification.className = 'upload-success';
+notification.className = type === 'error' ? 'upload-error' : 'upload-success';
 notification.textContent = message;
 notification.style.animation = 'slideDown 0.3s ease';
 notification.style.display = 'block';
-
+  
+// Add style for error notification
+if (type === 'error') {
+notification.style.backgroundColor = 'var(--error)';
+} else if (type === 'info') {
+notification.style.backgroundColor = 'var(--primary)';
+}
+  
 const adminContent = document.querySelector('.admin-content');
 adminContent.appendChild(notification);
-
+  
 // Hide notification after 3 seconds
 setTimeout(() => {
 notification.style.display = 'none';
+if (notification.parentNode) {
 adminContent.removeChild(notification);
+}
 }, 3000);
-}
-
-// Setup file input listeners
-document.addEventListener('DOMContentLoaded', function() {
-// Check admin status and load images
-checkAdminStatus();
-loadAllImages();
-
-// Gallery upload
-document.getElementById('galleryInput').addEventListener('change', function() {
-handleGalleryUpload(this);
-});
-
-// Setup other file inputs
-document.getElementById('logoInput').addEventListener('change', function() {
-handleFileUpload(this, IMAGE_KEYS.logo);
-});
-
-document.getElementById('backgroundInput').addEventListener('change', function() {
-handleFileUpload(this, IMAGE_KEYS.background);
-});
-
-document.getElementById('splashLogoInput').addEventListener('change', function() {
-handleFileUpload(this, IMAGE_KEYS.splashLogo);
-});
-
-document.getElementById('beethovenInput').addEventListener('change', function() {
-handleFileUpload(this, IMAGE_KEYS.beethoven);
-});
-
-document.getElementById('beethovenDetailInput').addEventListener('change', function() {
-handleFileUpload(this, IMAGE_KEYS.beethovenDetail);
-});
-
-document.getElementById('japYeoInput').addEventListener('change', function() {
-handleFileUpload(this, IMAGE_KEYS.japYeo);
-});
-
-document.getElementById('kueiPinInput').addEventListener('change', function() {
-handleFileUpload(this, IMAGE_KEYS.kueiPin);
-});
-
-document.getElementById('japTjiInput').addEventListener('change', function() {
-handleFileUpload(this, IMAGE_KEYS.japTji);
-});
-});
-
-// Handle file upload for single images
-function handleFileUpload(input, key) {
-const file = input.files[0];
-if (file && file.type.startsWith('image/')) {
-const reader = new FileReader();
-reader.onload = function(e) {
-const imageData = {
-id: Date.now() + Math.random(),
-src: e.target.result,
-name: file.name,
-uploadDate: new Date().toISOString()
-};
-
-saveImage(key, imageData);
-showNotification('Image uploaded successfully!');
-};
-reader.readAsDataURL(file);
-}
 }
 
 // Load all images
@@ -3631,9 +4260,9 @@ if (imageData) {
 document.getElementById('currentLogo').src = imageData.src;
 document.getElementById('currentLogo').style.display = 'block';
 document.getElementById('logoPlaceholder').style.display = 'none';
-document.getElementById('logoInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+document.getElementById('logoInfo').textContent = `Uploaded: ${new Date().toLocaleString()}`;
 document.getElementById('logoInfo').style.display = 'block';
-
+    
 // Update header logo
 document.getElementById('headerLogo').src = imageData.src;
 document.getElementById('headerLogo').style.display = 'block';
@@ -3641,7 +4270,7 @@ document.getElementById('headerLogo').style.display = 'block';
 document.getElementById('currentLogo').style.display = 'none';
 document.getElementById('logoPlaceholder').style.display = 'flex';
 document.getElementById('logoInfo').style.display = 'none';
-
+    
 // Hide header logo
 document.getElementById('headerLogo').style.display = 'none';
 }
@@ -3652,16 +4281,16 @@ if (imageData) {
 document.getElementById('currentBackground').src = imageData.src;
 document.getElementById('currentBackground').style.display = 'block';
 document.getElementById('backgroundPlaceholder').style.display = 'none';
-document.getElementById('backgroundInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+document.getElementById('backgroundInfo').textContent = `Uploaded: ${new Date().toLocaleString()}`;
 document.getElementById('backgroundInfo').style.display = 'block';
-
+    
 // Update hero background
 document.getElementById('heroBg').style.backgroundImage = `url(${imageData.src})`;
 } else {
 document.getElementById('currentBackground').style.display = 'none';
 document.getElementById('backgroundPlaceholder').style.display = 'flex';
 document.getElementById('backgroundInfo').style.display = 'none';
-
+    
 // Remove hero background
 document.getElementById('heroBg').style.backgroundImage = '';
 }
@@ -3672,9 +4301,9 @@ if (imageData) {
 document.getElementById('currentSplashLogo').src = imageData.src;
 document.getElementById('currentSplashLogo').style.display = 'block';
 document.getElementById('splashLogoPlaceholder').style.display = 'none';
-document.getElementById('splashLogoInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+document.getElementById('splashLogoInfo').textContent = `Uploaded: ${new Date().toLocaleString()}`;
 document.getElementById('splashLogoInfo').style.display = 'block';
-
+    
 // Update splash logo
 document.getElementById('splashLogoImg').src = imageData.src;
 document.getElementById('splashLogoImg').style.display = 'block';
@@ -3682,7 +4311,7 @@ document.getElementById('splashLogoImg').style.display = 'block';
 document.getElementById('currentSplashLogo').style.display = 'none';
 document.getElementById('splashLogoPlaceholder').style.display = 'flex';
 document.getElementById('splashLogoInfo').style.display = 'none';
-
+    
 // Hide splash logo
 document.getElementById('splashLogoImg').style.display = 'none';
 }
@@ -3693,9 +4322,9 @@ if (imageData) {
 document.getElementById('currentBeethoven').src = imageData.src;
 document.getElementById('currentBeethoven').style.display = 'block';
 document.getElementById('beethovenPlaceholder').style.display = 'none';
-document.getElementById('beethovenInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+document.getElementById('beethovenInfo').textContent = `Uploaded: ${new Date().toLocaleString()}`;
 document.getElementById('beethovenInfo').style.display = 'block';
-
+    
 // Update project image
 document.getElementById('beethovenProjectImg').src = imageData.src;
 document.getElementById('beethovenProjectImg').style.display = 'block';
@@ -3704,7 +4333,7 @@ document.getElementById('beethovenProjectPlaceholder').style.display = 'none';
 document.getElementById('currentBeethoven').style.display = 'none';
 document.getElementById('beethovenPlaceholder').style.display = 'flex';
 document.getElementById('beethovenInfo').style.display = 'none';
-
+    
 // Hide project image
 document.getElementById('beethovenProjectImg').style.display = 'none';
 document.getElementById('beethovenProjectPlaceholder').style.display = 'flex';
@@ -3716,9 +4345,9 @@ if (imageData) {
 document.getElementById('currentBeethovenDetail').src = imageData.src;
 document.getElementById('currentBeethovenDetail').style.display = 'block';
 document.getElementById('beethovenDetailPlaceholder').style.display = 'none';
-document.getElementById('beethovenDetailInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+document.getElementById('beethovenDetailInfo').textContent = `Uploaded: ${new Date().toLocaleString()}`;
 document.getElementById('beethovenDetailInfo').style.display = 'block';
-
+    
 // Update detail image
 document.getElementById('beethovenDetailImg').src = imageData.src;
 document.getElementById('beethovenDetailImg').style.display = 'block';
@@ -3727,7 +4356,7 @@ document.getElementById('beethovenDetailPlaceholder').style.display = 'none';
 document.getElementById('currentBeethovenDetail').style.display = 'none';
 document.getElementById('beethovenDetailPlaceholder').style.display = 'flex';
 document.getElementById('beethovenDetailInfo').style.display = 'none';
-
+    
 // Hide detail image
 document.getElementById('beethovenDetailImg').style.display = 'none';
 document.getElementById('beethovenDetailPlaceholder').style.display = 'flex';
@@ -3739,9 +4368,9 @@ if (imageData) {
 document.getElementById('currentJapYeo').src = imageData.src;
 document.getElementById('currentJapYeo').style.display = 'block';
 document.getElementById('japYeoPlaceholder').style.display = 'none';
-document.getElementById('japYeoInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+document.getElementById('japYeoInfo').textContent = `Uploaded: ${new Date().toLocaleString()}`;
 document.getElementById('japYeoInfo').style.display = 'block';
-
+    
 // Update artist image
 document.getElementById('japYeoImg').src = imageData.src;
 document.getElementById('japYeoImg').style.display = 'block';
@@ -3750,7 +4379,7 @@ document.getElementById('japYeoPlaceholder').style.display = 'none';
 document.getElementById('currentJapYeo').style.display = 'none';
 document.getElementById('japYeoPlaceholder').style.display = 'flex';
 document.getElementById('japYeoInfo').style.display = 'none';
-
+    
 // Hide artist image
 document.getElementById('japYeoImg').style.display = 'none';
 document.getElementById('japYeoPlaceholder').style.display = 'flex';
@@ -3762,9 +4391,9 @@ if (imageData) {
 document.getElementById('currentKueiPin').src = imageData.src;
 document.getElementById('currentKueiPin').style.display = 'block';
 document.getElementById('kueiPinPlaceholder').style.display = 'none';
-document.getElementById('kueiPinInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+document.getElementById('kueiPinInfo').textContent = `Uploaded: ${new Date().toLocaleString()}`;
 document.getElementById('kueiPinInfo').style.display = 'block';
-
+    
 // Update artist image
 document.getElementById('kueiPinImg').src = imageData.src;
 document.getElementById('kueiPinImg').style.display = 'block';
@@ -3773,7 +4402,7 @@ document.getElementById('kueiPinPlaceholder').style.display = 'none';
 document.getElementById('currentKueiPin').style.display = 'none';
 document.getElementById('kueiPinPlaceholder').style.display = 'flex';
 document.getElementById('kueiPinInfo').style.display = 'none';
-
+    
 // Hide artist image
 document.getElementById('kueiPinImg').style.display = 'none';
 document.getElementById('kueiPinPlaceholder').style.display = 'flex';
@@ -3785,9 +4414,9 @@ if (imageData) {
 document.getElementById('currentJapTji').src = imageData.src;
 document.getElementById('currentJapTji').style.display = 'block';
 document.getElementById('japTjiPlaceholder').style.display = 'none';
-document.getElementById('japTjiInfo').textContent = `Uploaded: ${new Date(imageData.uploadDate).toLocaleString()}`;
+document.getElementById('japTjiInfo').textContent = `Uploaded: ${new Date().toLocaleString()}`;
 document.getElementById('japTjiInfo').style.display = 'block';
-
+    
 // Update artist image
 document.getElementById('japTjiImg').src = imageData.src;
 document.getElementById('japTjiImg').style.display = 'block';
@@ -3796,27 +4425,58 @@ document.getElementById('japTjiPlaceholder').style.display = 'none';
 document.getElementById('currentJapTji').style.display = 'none';
 document.getElementById('japTjiPlaceholder').style.display = 'flex';
 document.getElementById('japTjiInfo').style.display = 'none';
-
+    
 // Hide artist image
 document.getElementById('japTjiImg').style.display = 'none';
 document.getElementById('japTjiPlaceholder').style.display = 'flex';
 }
 }
 
-// Login form handler
+// Login form handler with enhanced security
 document.getElementById('loginForm').addEventListener('submit', function(e) {
 e.preventDefault();
-
+  
+if (isLocked) {
+  const remainingTime = Math.ceil((lockTime - Date.now()) / (1000 * 60));
+  alert(`Account locked. Please try again in ${remainingTime} minutes.`);
+  return;
+}
+  
+const username = document.getElementById('adminUsername').value;
 const password = document.getElementById('adminPassword').value;
-
-if (password === ADMIN_PASSWORD) {
+const errorElement = document.getElementById('loginError');
+  
+if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+// Successful login
 isLoggedIn = true;
+loginAttempts = 0;
 localStorage.setItem('ymjAdminLoggedIn', 'true');
+localStorage.setItem('ymjLoginTime', Date.now().toString());
 document.getElementById('adminToggle').classList.add('logged-in');
 closeAdminLogin();
 toggleAdminDashboard();
+showNotification('Login successful!', 'success');
 } else {
-alert('Incorrect password. Please try again.');
+// Failed login
+loginAttempts++;
+errorElement.textContent = 'Invalid username or password';
+errorElement.style.display = 'block';
+  
+if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+  // Lock account
+  isLocked = true;
+  lockTime = Date.now() + (15 * 60 * 1000); // 15 minutes
+  localStorage.setItem('ymjLockedUntil', lockTime.toString());
+  
+  errorElement.textContent = 'Too many failed attempts. Account locked for 15 minutes.';
+  updateLoginAttempts();
+  
+  // Clear form
+  document.getElementById('adminUsername').value = '';
+  document.getElementById('adminPassword').value = '';
+} else {
+  updateLoginAttempts();
+}
 }
 });
 
@@ -3830,6 +4490,36 @@ modalImg.src = imageUrl;
 
 function closeImageModal() {
 document.getElementById('imageModal').style.display = 'none';
+}
+
+// Open full gallery modal
+function openFullGallery() {
+const modal = document.getElementById('full-gallery-modal');
+const fullGalleryGrid = document.getElementById('full-gallery-grid');
+const galleryData = JSON.parse(localStorage.getItem(IMAGE_KEYS.gallery) || '[]');
+  
+// Clear existing content
+fullGalleryGrid.innerHTML = '';
+  
+// Add all gallery images to full gallery
+galleryData.forEach((imageData, index) => {
+const galleryItem = document.createElement('div');
+galleryItem.className = 'full-gallery-item';
+galleryItem.innerHTML = `
+<img src="${imageData.src}" alt="${imageData.name}" onclick="openImageModal('${imageData.src}')">
+<div class="full-gallery-overlay">
+<p>${imageData.name}</p>
+</div>
+`;
+fullGalleryGrid.appendChild(galleryItem);
+});
+  
+modal.style.display = 'block';
+}
+
+// Close full gallery modal
+function closeFullGallery() {
+document.getElementById('full-gallery-modal').style.display = 'none';
 }
 
 // Language translations
@@ -4233,6 +4923,51 @@ element.classList.add('visible');
 
 window.addEventListener('scroll', checkFade);
 checkFade(); // Check on page load
+});
+
+// Setup file input listeners
+document.addEventListener('DOMContentLoaded', function() {
+// Check admin status and load images
+checkAdminStatus();
+loadAllImages();
+
+// Setup file inputs
+document.getElementById('logoInput').addEventListener('change', function() {
+handleFileUpload(this, IMAGE_KEYS.logo);
+});
+
+document.getElementById('backgroundInput').addEventListener('change', function() {
+handleFileUpload(this, IMAGE_KEYS.background);
+});
+
+document.getElementById('splashLogoInput').addEventListener('change', function() {
+handleFileUpload(this, IMAGE_KEYS.splashLogo);
+});
+
+document.getElementById('beethovenInput').addEventListener('change', function() {
+handleFileUpload(this, IMAGE_KEYS.beethoven);
+});
+
+document.getElementById('beethovenDetailInput').addEventListener('change', function() {
+handleFileUpload(this, IMAGE_KEYS.beethovenDetail);
+});
+
+document.getElementById('japYeoInput').addEventListener('change', function() {
+handleFileUpload(this, IMAGE_KEYS.japYeo);
+});
+
+document.getElementById('kueiPinInput').addEventListener('change', function() {
+handleFileUpload(this, IMAGE_KEYS.kueiPin);
+});
+
+document.getElementById('japTjiInput').addEventListener('change', function() {
+handleFileUpload(this, IMAGE_KEYS.japTji);
+});
+
+// Gallery upload
+document.getElementById('galleryInput').addEventListener('change', function() {
+handleGalleryUpload(this);
+});
 });
 </script>
 </body>
