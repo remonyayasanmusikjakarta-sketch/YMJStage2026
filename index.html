@@ -2160,6 +2160,10 @@ margin-right: 0.5rem;
         margin-bottom: 3rem;
     }
 }
+/* ================================================= */
+/* CSS UNTUK ANIMASI 3D VIOLIN WATERMARK */
+/* ================================================= */
+
 /* --- Kontainer Utama Watermark --- */
 #violin-watermark {
     position: fixed;        /* Membuatnya tetap di layar saat di-scroll */
@@ -2171,23 +2175,142 @@ margin-right: 0.5rem;
     transition: opacity 0.3s ease; /* Animasi halus saat opacity berubah */
 }
 
-/* --- Ubah Ukuran "Panggung" agar lebih kecil --- */
+/* --- Saat mouse di atas watermark, buat dia lebih jelas --- */
+#violin-watermark:hover {
+    opacity: 1;
+}
+
+/* --- "Panggung" untuk 3D --- */
 #violin-watermark .stage {
     width: 150px;           /* Setengah dari ukuran asli */
     height: 200px;          /* Setengah dari ukuran asli */
     perspective: 800px;     /* Sedikit kurangi kedalaman 3D */
 }
 
-/* --- Hentikan animasi berputar otomatis, kita akan gunakan scroll --- */
+/* --- Kontainer Utama Violin --- */
 #violin-watermark .violin-3d {
-    /* animation: spinViolin 12s infinite linear;  << NONAKTIFKAN INI */
-    transform-style: preserve-3d;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d; /* Ini membuat elemen di dalamnya hidup di ruang 3D */
 }
 
-/* --- Saat mouse di atas watermark, buat dia lebih jelas --- */
-#violin-watermark:hover {
-    opacity: 1;
+/* --- Gaya Umum untuk Semua Bagian Violin --- */
+#violin-watermark .violin-body,
+#violin-watermark .violin-neck,
+#violin-watermark .violin-headstock,
+#violin-watermark .bridge,
+#violin-watermark .tailpiece,
+#violin-watermark .chin-rest,
+#violin-watermark .f-hole {
+    position: absolute;
 }
+
+/* --- Badan Violin --- */
+#violin-watermark .violin-body {
+    width: 120px;
+    height: 300px;
+    background: linear-gradient(45deg, #8B4513, #A0522D, #D2691E);
+    border-radius: 50% 50% 60% 60% / 25% 25% 40% 40%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: inset -10px 0 20px rgba(0,0,0,0.5), inset 10px 0 20px rgba(255,255,255,0.2);
+}
+
+/* --- Leher Violin --- */
+#violin-watermark .violin-neck {
+    width: 30px;
+    height: 150px;
+    background: linear-gradient(to right, #4a2c17, #6b4423);
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* --- Kepala Violin --- */
+#violin-watermark .violin-headstock {
+    width: 50px;
+    height: 70px;
+    background: #3e2414;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 -5px 10px rgba(0,0,0,0.4);
+}
+
+#violin-watermark .peg {
+    position: absolute;
+    width: 8px;
+    height: 20px;
+    background: #111;
+    border-radius: 50%;
+}
+#violin-watermark .peg-1 { top: 10px; left: 8px; }
+#violin-watermark .peg-2 { top: 10px; right: 8px; }
+#violin-watermark .peg-3 { top: 35px; left: 8px; }
+#violin-watermark .peg-4 { top: 35px; right: 8px; }
+
+/* --- Senar --- */
+#violin-watermark .strings-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 100%;
+    transform-style: preserve-3d;
+}
+#violin-watermark .string {
+    position: absolute;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom, #eee, #ccc);
+    transform: translateZ(1px);
+}
+#violin-watermark .string:nth-child(1) { transform: translateZ(2px) translateX(-6px); }
+#violin-watermark .string:nth-child(2) { transform: translateZ(4px) translateX(-2px); }
+#violin-watermark .string:nth-child(3) { transform: translateZ(6px) translateX(2px); }
+#violin-watermark .string:nth-child(4) { transform: translateZ(8px) translateX(6px); }
+
+/* --- Bagian Detail Kecil --- */
+#violin-watermark .bridge {
+    width: 40px;
+    height: 30px;
+    background: #222;
+    top: 180px;
+    left: 50%;
+    transform: translateX(-50%) rotateX(90deg);
+}
+#violin-watermark .tailpiece {
+    width: 50px;
+    height: 10px;
+    background: #111;
+    top: 250px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+#violin-watermark .chin-rest {
+    width: 40px;
+    height: 20px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    top: 260px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+#violin-watermark .f-hole {
+    width: 15px;
+    height: 60px;
+    background: #0c0c0c;
+    border-radius: 50%;
+    top: 150px;
+}
+#violin-watermark .f-hole-left { left: 25%; transform: rotate(-20deg); }
+#violin-watermark .f-hole-right { right: 25%; transform: rotate(20deg); }
+
 </style>
 </head>
 <body>
@@ -4361,84 +4484,90 @@ window.addEventListener('scroll', checkFade);
 checkFade();
 });
 </script>
-<!-- Animasi 3D Violin Watermark -->
-<div id="violin-watermark">
-    <div class="stage">
-        <div class="violin-3d">
-            <!-- Badan Violin -->
-            <div class="violin-body"></div>
-            
-            <!-- Leher & Kepala -->
-            <div class="violin-neck"></div>
-            <div class="violin-headstock">
-                <div class="peg peg-1"></div>
-                <div class="peg peg-2"></div>
-                <div class="peg peg-3"></div>
-                <div class="peg peg-4"></div>
-            </div>
+ <!-- ================================================= -->
+    <!-- HTML UNTUK WATERMARK VIOLIN (DILETAKKAN SEBELUM </body>) -->
+    <!-- ================================================= -->
+    <div id="violin-watermark">
+        <div class="stage">
+            <div class="violin-3d">
+                <!-- Badan Violin -->
+                <div class="violin-body"></div>
+                
+                <!-- Leher & Kepala -->
+                <div class="violin-neck"></div>
+                <div class="violin-headstock">
+                    <div class="peg peg-1"></div>
+                    <div class="peg peg-2"></div>
+                    <div class="peg peg-3"></div>
+                    <div class="peg peg-4"></div>
+                </div>
 
-            <!-- Senar -->
-            <div class="strings-container">
-                <div class="string"></div>
-                <div class="string"></div>
-                <div class="string"></div>
-                <div class="string"></div>
-            </div>
+                <!-- Senar -->
+                <div class="strings-container">
+                    <div class="string"></div>
+                    <div class="string"></div>
+                    <div class="string"></div>
+                    <div class="string"></div>
+                </div>
 
-            <!-- Bagian Detail -->
-            <div class="bridge"></div>
-            <div class="tailpiece"></div>
-            <div class="chin-rest"></div>
-            <div class="f-hole f-hole-left"></div>
-            <div class="f-hole f-hole-right"></div>
+                <!-- Bagian Detail -->
+                <div class="bridge"></div>
+                <div class="tailpiece"></div>
+                <div class="chin-rest"></div>
+                <div class="f-hole f-hole-left"></div>
+                <div class="f-hole f-hole-right"></div>
+            </div>
         </div>
     </div>
-</div>
-<!-- Akhir Animasi 3D Violin Watermark -->
-<script>
-    // Tunggu hingga seluruh halaman dimuat
-    document.addEventListener('DOMContentLoaded', function() {
-        
-        // Pilih elemen violin-3d dari dalam watermark
-        const violin = document.querySelector('#violin-watermark .violin-3d');
-        
-        // Dapatkan tinggi total halaman
-        const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-        
-        // Fungsi untuk menganimasikan violin berdasarkan scroll
-        function animateOnScroll() {
-            // Dapatkan posisi scroll saat ini (0 sampai 1)
-            const scrollPosition = window.scrollY / documentHeight;
+
+    <!-- ================================================= -->
+    <!-- KODE JAVASCRIPT (DILETAKKAN PALING AKHIR) -->
+    <!-- ================================================= -->
+    <script>
+        // Tunggu hingga seluruh halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
             
-            // --- Efek Magic 1: Rotasi Berdasarkan Scroll ---
-            // Rotasi Y dari -180deg ke 180deg saat scroll dari atas ke bawah
-            const rotationY = (scrollPosition * 360) - 180;
+            // Pilih elemen violin-3d dari dalam watermark
+            const violin = document.querySelector('#violin-watermark .violin-3d');
             
-            // --- Efek Magic 2: Gerakan Naik-Turun ---
-            // Bergerak naik 20px saat scroll ke bawah
-            const translateY = scrollPosition * -20;
+            // Dapatkan tinggi total halaman
+            const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
             
-            // --- Efek Magic 3: Rotasi Sedikit di Sumbu X ---
-            // Sedikit miring ke depan/belakang
-            const rotationX = Math.sin(scrollPosition * Math.PI * 2) * 15;
+            // Fungsi untuk menganimasikan violin berdasarkan scroll
+            function animateOnScroll() {
+                // Dapatkan posisi scroll saat ini (0 sampai 1)
+                const scrollPosition = window.scrollY / documentHeight;
+                
+                // --- Efek Magic 1: Rotasi Berdasarkan Scroll ---
+                // Rotasi Y dari -180deg ke 180deg saat scroll dari atas ke bawah
+                const rotationY = (scrollPosition * 360) - 180;
+                
+                // --- Efek Magic 2: Gerakan Naik-Turun ---
+                // Bergerak naik 20px saat scroll ke bawah
+                const translateY = scrollPosition * -20;
+                
+                // --- Efek Magic 3: Rotasi Sedikit di Sumbu X ---
+                // Sedikit miring ke depan/belakang
+                const rotationX = Math.sin(scrollPosition * Math.PI * 2) * 15;
+                
+                // Gabungkan semua transformasi
+                violin.style.transform = `
+                    rotateY(${rotationY}deg) 
+                    rotateX(${rotationX}deg) 
+                    translateY(${translateY}px)
+                `;
+            }
             
-            // Gabungkan semua transformasi
-            violin.style.transform = `
-                rotateY(${rotationY}deg) 
-                rotateX(${rotationX}deg) 
-                translateY(${translateY}px)
-            `;
-        }
-        
-        // Jalankan animasi saat halaman di-scroll
-        window.addEventListener('scroll', animateOnScroll);
-        
-        // Jalankan sekali saat halaman dimuat untuk posisi awal
-        animateOnScroll();
-    });
-</script>
+            // Jalankan animasi saat halaman di-scroll
+            window.addEventListener('scroll', animateOnScroll);
+            
+            // Jalankan sekali saat halaman dimuat untuk posisi awal
+            animateOnScroll();
+        });
+    </script>
 </body>
 </html>
+
 
 
 
