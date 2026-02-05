@@ -467,34 +467,24 @@ box-shadow: var(--shadow-lg);
 }
 
 /* Mission Highlight dengan Drop Cap */
+/* --- GAYA UNTUK BINGKAI/KONTAINER --- */
 .mission-highlight {
-color: var(--secondary);
-font-weight: 700;
-font-size: 1.5rem;
 margin: 2.5rem auto;
 position: relative;
 padding: 1.5rem;
 background: var(--primary-dark);
 border-radius: 16px;
 border: 1px solid var(--border);
-max-width: 500px;
-text-align: left;
-font-family: 'Playfair Display', serif;
-line-height: 1.4;
+max-width: 500px; /* Ini yang mengontrol ukuran total */
 }
 
-/* Drop Cap 2 Baris dengan Brush Script */
-.mission-highlight::first-letter {
-font-family: 'Playfair Display', serif;
-font-size: 6rem;
-font-weight: 400;
-color: rgb(255, 209, 45);
-float: left;
-line-height: 0.8;
-margin-right: 15px;
-margin-top: 0.2rem;
-text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
-height: 3.8rem;
+/* --- GAYA KHUSUS UNTUK FOTO DI DALAM BINGKAI --- */
+.mission-highlight img {
+max-width: 100%;  /* Foto tidak akan melebihi lebar bingkai (500px) */
+height: auto;     /* Tinggi foto menyesuaikan proporsi */
+display: block;   /* Membantu perataan */
+margin-left: auto; /* Membuat foto rata tengah */
+margin-right: auto;/* Membuat foto rata tengah */
 }
 
 /* YMJ Stage Caption Section */
@@ -4305,6 +4295,7 @@ checkFade();
 </script>
 </body>
 </html>
+
 
 
 
