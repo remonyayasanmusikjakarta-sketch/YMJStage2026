@@ -104,11 +104,12 @@ margin-left: auto;
 margin-right: auto;
 }
 h1 img {
-max-width: 1500px; /* Membuat logo tidak melebihi lebar container-nya */
-height: auto;    /* Menjaga proporsi logo */
-display: auto;  /* Membantu perataan */
-margin-left: auto; /* Membuat foto rata tengah */
-margin-right: auto;/* Membuat foto rata tengah */
+height: 1600px; /* Beri tinggi pada container */
+display: flex; /* Aktifkan flexbox */
+align-items: center; /* Ini untuk menengahkan secara vertikal */
+justify-content: center; /* Ini untuk menengahkan secara horizontal (bonus!) */
+max-width: 100%;
+height: auto;
 }
 /* Splash Screen Styles */
 .splash-screen {
@@ -2353,7 +2354,9 @@ Karier artistik yang berkelanjutan tumbuh melalui kepercayaan, tujuan bersama, d
 <p data-lang-key="about-y-1">Seniman memperoleh arahan,</p>
 <p data-lang-key="about-y-2">Proyek mendapatkan struktur,</p>
 <p data-lang-key="about-y-3">Dan kolaborasi berkembang menjadi kemitraan jangka panjang.</p>
-<p class="mission-highlight" data-lang-key="about-motto-2">"Seni menghubungkan jiwa, melampaui batas waktu dan ruang."</p>
+<p class="mission-highlight">
+    <img src="deskripsistage3.jpg" alt="Musik sebagai panggilan dan makna">
+</p>
 <p data-lang-key="about-here-title">Di sini,</p>
 <p data-lang-key="about-here-1">seniman menemukan arahan,</p>
 <p data-lang-key="about-here-2">proyek menemukan kejelasan,</p>
@@ -2927,7 +2930,9 @@ YMJ 演出与艺术家管理部旗舰倡议
 <p data-lang-key="community-invitation-desc">
 Jika Anda seorang seniman, presenter, pendidik, pengelola, atau sahabat seni — kami menyambut Anda dengan hangat. Mari berbagi gagasan, menjalin keterhubungan, mencipta karya yang bermakna, dan membangun persahabatan melalui musik.
 </p>
-<p class="mission-highlight" data-lang-key="community-motto">Bersama, mari kita memelihara talenta, merayakan seni, dan membawa musik ke tempat di mana ia paling dibutuhkan.</p>
+<p class="mission-highlight">
+    <img src="deskripsistage4.jpg" alt="Musik sebagai panggilan dan makna">
+</p>
 </div>
 
 <div class="community-grid">
@@ -4329,6 +4334,7 @@ checkFade();
 </script>
 </body>
 </html>
+
 
 
 
