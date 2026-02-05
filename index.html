@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YMJ Stage - Performance & Artist Management Division</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Brusher&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=All+Round+Gothic:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 :root {
@@ -41,7 +41,7 @@ scroll-behavior: smooth;
 }
 
 body {
-font-family: 'Inter', 'Plus Jakarta Sans', sans-serif;
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 line-height: 1.6;
 color: var(--text-dark);
 background-color: var(--bg-light);
@@ -49,7 +49,7 @@ overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
-font-family: 'Playfair Display', serif;
+font-family: 'All Round Gothic', sans-serif;
 font-weight: 700;
 color: var(--primary);
 line-height: 1.2;
@@ -761,7 +761,7 @@ transform: scale(1.05) rotate(5deg);
 
 .splash-text {
 color: white;
-font-family: 'Playfair Display', serif;
+font-family: 'All Round Gothic', sans-serif;
 font-size: 2.5rem;
 font-weight: 900;
 margin-bottom: 15px;
@@ -854,7 +854,7 @@ box-shadow: var(--shadow-md);
 }
 
 .logo-text {
-font-family: 'Playfair Display', serif;
+font-family: 'All Round Gothic', sans-serif;
 font-size: 1.8rem;
 color: var(--primary);
 text-decoration: none;
@@ -1086,6 +1086,10 @@ transform: translateY(-3px);
 box-shadow: var(--shadow-lg);
 }
 
+/* Versi Shorthand (lebih disarankan) */
+.hero {
+  background: #333 url('gambar.jpg') no-repeat center / cover;
+}
 /* Mission Highlight dengan Drop Cap */
 .mission-highlight {
 color: var(--secondary);
@@ -2110,7 +2114,7 @@ width: 100%;
 padding: 14px;
 border: 2px solid var(--border);
 border-radius: 12px;
-font-family: inherit;
+font-family: 'Inter', sans-serif;
 transition: all 0.3s ease;
 background: var(--bg-light);
 }
@@ -2591,6 +2595,134 @@ transition: all 0.3s ease;
 .file-remove:hover {
 transform: scale(1.05);
 box-shadow: var(--shadow-sm);
+}
+/* ==================== BACKGROUND FOTO JUDUL SECTION ==================== */
+/* Letakkan kode baru ini di sini */
+
+/* Hero Title Background */
+.hero h1 {
+    background-image: url('LINK_FOTO_YMJ_STAGE_ANDA');
+    background-size: cover;
+    background-position: center;
+    color: white !important;
+    position: relative;
+    padding: 2rem 3rem;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 2.5rem;
+}
+
+.hero h1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(10, 14, 39, 0.8) 0%, rgba(30, 58, 95, 0.6) 100%);
+    border-radius: 20px;
+    z-index: -1;
+}
+
+/* About Section Title */
+#about .section-title {
+    background-image: url('LINK_FOTO_TENTANG_YMJ');
+    background-size: cover;
+    background-position: center;
+    color: white !important;
+    padding: 2.5rem 3rem;
+    border-radius: 20px;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#about .section-title::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(30, 58, 95, 0.85) 0%, rgba(46, 90, 142, 0.75) 100%);
+    border-radius: 20px;
+    z-index: -1;
+}
+
+/* Events Section Title */
+#events .section-title {
+    background-image: url('LINK_FOTO_ACARA_KAMI');
+    background-size: cover;
+    background-position: center;
+    color: white !important;
+    padding: 2.5rem 3rem;
+    border-radius: 20px;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#events .section-title::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(201, 48, 44, 0.85) 0%, rgba(231, 76, 60, 0.75) 100%);
+    border-radius: 20px;
+    z-index: -1;
+}
+
+/* Artists Section Title */
+#artists .section-title {
+    background-image: url('LINK_FOTO_ARTIS_KAMI');
+    background-size: cover;
+    background-position: center;
+    color: white !important;
+    padding: 2.5rem 3rem;
+    border-radius: 20px;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#artists .section-title::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.85) 0%, rgba(241, 196, 15, 0.75) 100%);
+    border-radius: 20px;
+    z-index: -1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.5rem;
+        padding: 1.5rem 2rem;
+        margin-bottom: 2rem;
+    }
+
+    #about .section-title,
+    #events .section-title,
+    #artists .section-title {
+        font-size: 2rem;
+        padding: 2rem 1.5rem;
+        margin-bottom: 3rem;
+    }
 }
 </style>
 </head>
@@ -5869,4 +6001,3 @@ handleGalleryUpload(this);
 </script>
 </body>
 </html>
-
