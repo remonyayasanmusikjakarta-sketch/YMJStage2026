@@ -2486,7 +2486,7 @@ YMJ 演出与艺术家管理部致力于支持由艺术家发起、以长远愿�
     </div>
     <div class="events-grid">
         <div class="event-card fade-in">
-            <div class="event-date">Maret, 2027 - Febriari, 2028</div>
+            <div class="event-date">Maret 2027 - Febriari 2028</div>
             <h3 class="event-title">Seri Konser Peringatan Dua Abad Wafatnya Beethoven</h3>
             <div class="event-location">
                 <i class="fas fa-map-marker-alt"></i>
@@ -2539,7 +2539,7 @@ YMJ 演出与艺术家管理部致力于支持由艺术家发起、以长远愿�
                 <span>Gedung JIExpo, Jakarta</span>
             </div>
             <p class="event-description">
-                Kompetisi piano internasional yang menampilkan pianis muda berbakat dari seluruh dunia.
+                Kompetisi piano internasional yang menampilkan pianis muda berbakat.
             </p>
             <a href="#" class="event-link" onclick="showEventDetail('liszt2025'); return false;">
                 Pelajari Lebih Lanjut <i class="fas fa-arrow-right"></i>
@@ -3669,12 +3669,41 @@ zh: {
 // Event data
 const EVENT_DATA = {
 'beyond2024': {
-title: 'Beyond the Notes',
-date: 'September 22-9, 2024',
-location: 'Jakarta, Indonesia',
-description: 'Perayaan ulang tahun ke-40 YMJ di JIExpo dengan pertunjukan inovatif.',
-detail: 'Beyond the Notes adalah acara khusus yang merayakan ulang tahun ke-40 Yayasan Musik Jakarta. Acara ini menampilkan serangkaian pertunjukan musik klasik yang inovatif, kolaborasi antar seniman, dan workshop pendidikan musik. Selama lima hari, pengunjung dapat menikmati konser dari artis lokal dan internasional, diskusi panel dengan para ahli musik, dan sesi masterclass yang dipimpin oleh musisi terkemuka.',
-image: 'Beyonthenotes.jpg'
+    title: 'Beyond the Notes',
+    date: 'September 22-9, 2024',
+    location: 'Jakarta, Indonesia',
+    description: 'Perayaan ulang tahun ke-40 YMJ di JIExpo dengan pertunjukan inovatif.',
+    detail: 'Beyond the Notes adalah acara khusus yang merayakan ulang tahun ke-40 Yayasan Musik Jakarta. Acara ini menampilkan serangkaian pertunjukan musik klasik yang inovatif, kolaborasi antar seniman, dan workshop pendidikan musik. Selama lima hari, pengunjung dapat menikmati konser dari artis lokal dan internasional, diskusi panel dengan para ahli musik, dan sesi masterclass yang dipimpin oleh musisi terkemuka.',
+    
+    // --- TAMBAHAN HIGHLIGHT ACARA ---
+    highlights: [
+        {
+            artist: 'Dr. Kuei Pin Yeo',
+            pieces: [
+                'Chopin, Piano Concerto No. 1',
+                'Gorshwin, Rhapsody in Blue'
+            ]
+        },
+        {
+            artist: 'Jap Tji Kien',
+            role: 'sebagai dirgend dan solis dalam vivaldi the sonata.'
+        },
+        {
+            piece: 'Saint-Saens: Carnifal of The Animals',
+            performers: [
+                'Vicka Ines Karlan',
+                'Vidia Virgina Karlan',
+                'Yovela Feodora',
+                'Amelia Santoso',
+                'Nayaka Clarence',
+                'Mevlied Tenri Nahla',
+                'Madeleine Tjhie',
+                'Lita Tandiono',
+                'Grace Carla Suherman',
+                'Jesslyn Julia Gunawan'
+            ]
+        }
+    ]
 },
 'ioc2024': {
 title: 'Indonesia Open Competition (IOC)',
@@ -3689,7 +3718,7 @@ title: 'New York Audition Franz Liszt Piano Competition',
 date: 'Januari 15-20, 2025',
 location: 'New York, USA',
 description: 'Kompetisi piano internasional yang menampilkan pianis muda berbakat dari seluruh dunia.',
-detail: 'New York Audition Franz Liszt Piano Competition adalah acara internasional yang menampilkan pianis muda berbakat dari seluruh dunia. Kompetisi ini didedikasikan untuk menghormati warisan Franz Liszt dan mendorong interpretasi karya-karyanya yang otentik. Para pemenang akan mendapatkan kesempatan untuk tampil di venue terkemuka di New York dan seluruh dunia.',
+detail: 'New York Audition Franz Liszt Piano Competition adalah acara internasional yang menampilkan pianis muda berbakat dari seluruh dunia. Kompetisi ini didedikasikan untuk menghormati warisan Franz Liszt dan mendorong interpretasi karya-karyanya yang otentik. Para pemenang akan mendapatkan kesempatan untuk tampil di venue terkemuka di New York.',
 image: ''
 },
 'ioc2025': {
@@ -3705,7 +3734,7 @@ title: 'CREMONA MUSICA',
 date: 'Sebtember 27-9, 2025',
 location: 'Cremona Fiere, Italy',
 description: 'Dialog Tingkat Dunia: Dr. Kuei Pin Yeo di Cremona Musica',
-detail: 'Dari Jakarta ke Cremona, dialog global tentang masa depan pendidikan musik hadir. Saksikan Dr. Kuei Pin Yeo, seorang pianis dan pendidik ternama dari Indonesia, berbagi panggung dengan para pakar Eropa dalam sesi roundtable PhD AFAM. Dengan tema "DOKTOR MUSIK = MASAA DEPAN SENI", acara ini menjanjikan wawasan mendalam tentang peran akademisi dalam industri musik global.',
+detail: 'Dari Jakarta ke Cremona, dialog global tentang masa depan pendidikan musik hadir. Saksikan Dr. Kuei Pin Yeo, seorang pianis dan pendidik ternama dari Indonesia, berbagi panggung dengan para pakar Eropa dalam sesi roundtable PhD AFAM. Dengan tema "DOKTOR MUSIK = MASA DEPAN SENI", acara ini menjanjikan wawasan mendalam tentang peran akademisi dalam industri musik global.',
 image: 'seminaritaly.jpg'
 },
 'CONCERITALY2025': {
@@ -3713,7 +3742,7 @@ title: 'CONCERT OF JAP-YEO Duo',
 date: 'Sebtember 27-9, 2025',
 location: 'Cremona Fiere, Italy',
 description: 'Pertunjukan Keunggulan Musikal di Jantung Cremona',
-detail: 'Dalam rangkaian festival musik paling bergengsi di Italia, kami mengundang Anda untuk menyaksikan sebuah penampilan keunggulan. Kolaborasi antara violinis Tji Kien Jap dan pianis Dr. Kuei Pin Yeo menjanjikan sebuah konser yang penuh dengan teknik brilian dan interpretasi mendalam. Sebuah acara yang wajib dihadiri oleh para pencinta musik sejati.',
+detail: 'Dalam rangkaian festival musik di Italia, kami mengundang Anda untuk menyaksikan sebuah penampilan keunggulan. Kolaborasi antara violinis Tji Kien Jap dan pianis Dr. Kuei Pin Yeo menjanjikan sebuah konser yang penuh dengan teknik brilian dan interpretasi mendalam. Sebuah acara yang wajib dihadiri oleh para pencinta musik sejati.',
 image: 'konseryapyeoduoitaly.jpg'
 },
 'IOC2026': {
@@ -3734,10 +3763,10 @@ image: 'https://picsum.photos/seed/festival2026/800/400.jpg'
 },
 'beethoven2027': {
 title: 'Seri Konser Peringatan Dua Abad Wafatnya Beethoven',
-date: 'Maret, 2027 - Febriari, 2028',
+date: 'Maret 2027 - Febriari 2028',
 location: 'Berbagai Tempat',
 description: 'Siklus pertunjukan global memperingati 200 tahun wafatnya Beethoven.',
-detail: 'Seri Konser Peringatan Dua Abad Wafatnya Beethoven adalah siklus pertunjukan global yang memperingati 200 tahun wafatnya Ludwig van Beethoven. Seri ini akan menampilkan seluruh karya chamber music Beethoven, dengan fokus khusus pada sonata untuk biola dan piano. Konser akan diadakan di berbagai kota di seluruh dunia, menampilkan interpretasi yang otentik dan kontemporer.',
+detail: 'Seri Konser Peringatan Dua Abad Wafatnya Beethoven adalah siklus pertunjukan global yang memperingati 200 tahun wafatnya Ludwig van Beethoven. Seri ini akan menampilkan seluruh Sonata Beethoven, dengan fokus pada sonata untuk biola dan piano. Konser akan diadakan di berbagai kota di seluruh dunia, menampilkan interpretasi yang otentik dan kontemporer.',
 image: 'beethovenpict.jpg',
 }
 };
@@ -3772,7 +3801,10 @@ zh: `
 repertoire: {
   id: `
   <ul class="repertoire-list">
-    <li>Repertoar Jap-Yeo Duo: Sonata Lengkap untuk Piano dan Biola No. 1 - 10</li>
+    <li>Repertoar Jap-Yeo Duo: Beethoven: Sonata Lengkap untuk Piano dan Biola No. 1 - 10</li>
+     <ul class="Beethoven-list">
+      <li>Sonata Lengkap untuk Piano dan Biola No. 1 - 10</li>
+      <li>Triple< Concerto/li>
   </ul>
   `,
   en: `
@@ -4043,6 +4075,17 @@ repertoire: {
   id: `
   <ul class="repertoire-list">
     <li>Beethoven: Sonata Lengkap untuk Piano dan Biola No. 1 - 10</li>
+    <ul class="repertoire-sublist">
+      <li>No. 1 Op. 12 No. 1</li>
+      <li>No. 2 Op. 12 No. 2</li>
+      <li>No. 3 Op. 12 No. 3</li>
+      <li>No. 4 Op. 23</li>
+      <li>No. 5 Op. 24 ‘Spring’</li>
+      <li>No. 6 Op. 30 No. 1</li>
+      <li>No. 7 Op. 30 No. 2</li>
+      <li>No. 8 Op. 30 No. 3</li>
+      <li>No. 9 Op. 47 ‘Kreutzer’</li>
+      <li>No. 10 Op. 96</li>     
   </ul>
   `,
   en: `
@@ -4435,6 +4478,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
 
 
 
