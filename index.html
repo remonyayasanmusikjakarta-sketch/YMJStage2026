@@ -4274,8 +4274,37 @@ zh: `
 let currentLang = 'id';
 
 // Language switching functionality
-function switchLanguage(lang) {
-currentLang = lang;
+document.addEventListener('DOMContentLoaded', function() {
+    const langButtons = document.querySelectorAll('.lang-btn');
+    const contentId = document.getElementById('indonesian-content');
+    const contentEn = document.getElementById('english-content');
+    const contentZh = document.getElementById('chinese-content');
+    
+    langButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang');
+            
+            // Remove active class from all buttons
+            langButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Hide all content
+            contentId.style.display = 'none';
+            contentEn.style.display = 'none';
+            contentZh.style.display = 'none';
+            
+            // Show selected content
+            if (lang === 'id') {
+                contentId.style.display = 'block';
+            } else if (lang === 'en') {
+                contentEn.style.display = 'block';
+            } else if (lang === 'zh') {
+                contentZh.style.display = 'block';
+            }
+        });
+    });
+});
   
 // Update active language button
 document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -4597,6 +4626,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
 
 
 
